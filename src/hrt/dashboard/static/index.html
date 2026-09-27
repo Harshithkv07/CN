@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HRT-Agent SOC Console</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header>
+  <div class="brand">
+    <span class="logo">HRT</span>
+    <div>
+      <h1>HRT-Agent SOC Console</h1>
+      <div class="sub">Hybrid RAG-Telemetry &middot; autonomous Level-1 analyst</div>
+    </div>
+  </div>
+  <div class="health" id="health">
+    <span class="pill" id="pill-stream">stream</span>
+    <span class="pill" id="pill-rag">RAG</span>
+    <span class="pill" id="pill-sandbox">sandbox</span>
+    <span class="pill" id="pill-deploy">deploy</span>
+  </div>
+</header>
+
+<section class="metrics" id="metrics">
+  <div class="metric"><div class="mv" id="m-flows">0</div><div class="ml">flows ingested</div></div>
+  <div class="metric"><div class="mv" id="m-alerts">0</div><div class="ml">alerts (Tier 1)</div></div>
+  <div class="metric"><div class="mv" id="m-reduction">--</div><div class="ml">telemetry reduction</div></div>
+  <div class="metric"><div class="mv" id="m-incidents">0</div><div class="ml">incidents</div></div>
+  <div class="metric"><div class="mv ok" id="m-deployed">0</div><div class="ml">rules deployed</div></div>
+  <div class="metric"><div class="mv warn" id="m-escalated">0</div><div class="ml">escalated</div></div>
+</section>
+
+<main>
+  <div class="col">
+    <h2>Incident queue</h2>
+    <div id="incident-list" class="list"><div class="empty">Waiting for alerts&hellip;</div></div>
+  </div>
+  <div class="col detail">
+    <h2>Incident detail</h2>
+    <div id="detail"><div class="empty">Select an incident to see the three-tier trace.</div></div>
+  </div>
+</main>
+
+<div class="firewall">
+  <h2>Live firewall ruleset <span class="sub" id="fw-src">(protected server)</span></h2>
+  <pre id="firewall">(none deployed)</pre>
+</div>
+
+<script src="/static/app.js"></script>
+</body>
+</html>

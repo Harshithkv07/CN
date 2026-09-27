@@ -1,0 +1,29 @@
+# No-RAG probe (separate run, 2026-09-27 ~13:20, after results/agent.json)
+# One synthesised incident per CICIDS class through the no-RAG agent (llama3.2:3b), printing every attempt.
+# Shows what the model answers without retrieval, and the guardrail feedback that drove each retry.
+
+== DDOS attack-HOIC  expected tactic=impact techniques=['T1498', 'T1498.001', 'T1499', 'T1499.002']  -> SAFE
+   attempt 1: id='T1110.001' known=True name='Network Service Scan' tactic='Reconnaissance' attack_type='Connection Flood'
+   attempt 1 guardrail: policy: rule must append (-A) or insert (-I) into a chain
+   attempt 2: id='T1110.001' known=True name='Network Service Scan' tactic='Reconnaissance' attack_type='Connection Flood'
+   attempt 2 guardrail: conflict: shadowed: earlier rule #4 '-A INPUT -p tcp --dport 80 -j ACCEPT' in INPUT ACCEPTs overlapping traffic, so this -A rule would never match it. Insert it
+   attempt 3: id='T1110.001' known=True name='Network Service Scan' tactic='Reconnaissance' attack_type='Connection Flood'
+== DoS attacks-Hulk  expected tactic=impact techniques=['T1499', 'T1499.002', 'T1498']  -> SAFE
+   attempt 1: id='T1110.001' known=True name='Network Service Exploitation' tactic='Network Service Exploitation' attack_type='Connection Flooding'
+   attempt 1 guardrail: policy: rule must append (-A) or insert (-I) into a chain
+   attempt 2: id='T1110.001' known=True name='Network Service Exploitation' tactic='Network Service Exploitation' attack_type='Connection Flooding'
+   attempt 2 guardrail: conflict: shadowed: earlier rule #4 '-A INPUT -p tcp --dport 80 -j ACCEPT' in INPUT ACCEPTs overlapping traffic, so this -A rule would never match it. Insert it
+   attempt 3: id='T1110.001' known=True name='Network Service Exploitation' tactic='Network Service Exploitation' attack_type='Connection Flooding'
+== FTP-BruteForce  expected tactic=credential-access techniques=['T1110', 'T1110.001', 'T1110.003']  -> SAFE
+   attempt 1: id='T1210.001' known=False name='Brute-force attack' tactic='T1210' attack_type='Brute-force attack'
+   attempt 1 guardrail: policy: rule must append (-A) or insert (-I) into a chain
+   attempt 2: id='T1210.001' known=False name='Brute-force attack' tactic='T1210' attack_type='Brute-force attack'
+   attempt 2 guardrail: conflict: shadowed: earlier rule #4 '-A INPUT -p tcp --dport 80 -j ACCEPT' in INPUT ACCEPTs overlapping traffic, so this -A rule would never match it. Insert it
+   attempt 3: id='T1210.001' known=False name='Brute-force attack' tactic='T1210' attack_type='Brute-force attack'
+== SSH-Bruteforce  expected tactic=credential-access techniques=['T1110', 'T1110.001', 'T1110.003']  -> SAFE
+   attempt 1: id='T1210.001' known=False name='Brute-force attack' tactic='T1210' attack_type='Brute-force attack'
+   attempt 1 guardrail: policy: rule must append (-A) or insert (-I) into a chain
+   attempt 2: id='T1210.001' known=False name='Brute-force attack' tactic='T1210' attack_type='Brute-force attack'
+   attempt 2 guardrail: conflict: shadowed: earlier rule #4 '-A INPUT -p tcp --dport 80 -j ACCEPT' in INPUT ACCEPTs overlapping traffic, so this -A rule would never match it. Insert it
+   attempt 3: id='T1210.001' known=False name='Brute-force attack' tactic='T1210' attack_type='Brute-force attack'
+

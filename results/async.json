@@ -1,0 +1,112 @@
+{
+  "suite": "async",
+  "generated_at": "2026-09-16 21:04:27",
+  "result": {
+    "llm_seconds": 3.0,
+    "duration_s": 30.0,
+    "workers": 2,
+    "rates": {
+      "1": {
+        "inline": {
+          "processed": 30,
+          "mean_accept_lag_s": 29.0,
+          "max_accept_lag_s": 58.0,
+          "mean_complete_lag_s": 32.0,
+          "max_complete_lag_s": 61.0,
+          "max_backlog": 20,
+          "overloaded": true
+        },
+        "async": {
+          "processed": 30,
+          "mean_accept_lag_s": 0.0,
+          "max_accept_lag_s": 0.0,
+          "mean_complete_lag_s": 10.0,
+          "max_complete_lag_s": 17.0,
+          "max_backlog": 10,
+          "overloaded": true
+        }
+      },
+      "2": {
+        "inline": {
+          "processed": 60,
+          "mean_accept_lag_s": 73.75,
+          "max_accept_lag_s": 147.5,
+          "mean_complete_lag_s": 76.75,
+          "max_complete_lag_s": 150.5,
+          "max_backlog": 50,
+          "overloaded": true
+        },
+        "async": {
+          "processed": 60,
+          "mean_accept_lag_s": 0.0,
+          "max_accept_lag_s": 0.0,
+          "mean_complete_lag_s": 32.0,
+          "max_complete_lag_s": 61.0,
+          "max_backlog": 40,
+          "overloaded": true
+        }
+      },
+      "5": {
+        "inline": {
+          "processed": 150,
+          "mean_accept_lag_s": 208.6,
+          "max_accept_lag_s": 417.2,
+          "mean_complete_lag_s": 211.6,
+          "max_complete_lag_s": 420.2,
+          "max_backlog": 140,
+          "overloaded": true
+        },
+        "async": {
+          "processed": 150,
+          "mean_accept_lag_s": 0.0,
+          "max_accept_lag_s": 0.0,
+          "mean_complete_lag_s": 99.2,
+          "max_complete_lag_s": 195.4,
+          "max_backlog": 130,
+          "overloaded": true
+        }
+      },
+      "10": {
+        "inline": {
+          "processed": 300,
+          "mean_accept_lag_s": 433.55,
+          "max_accept_lag_s": 867.1,
+          "mean_complete_lag_s": 436.55,
+          "max_complete_lag_s": 870.1,
+          "max_backlog": 290,
+          "overloaded": true
+        },
+        "async": {
+          "processed": 300,
+          "mean_accept_lag_s": 0.0,
+          "max_accept_lag_s": 0.0,
+          "mean_complete_lag_s": 211.6,
+          "max_complete_lag_s": 420.2,
+          "max_backlog": 280,
+          "overloaded": true
+        }
+      },
+      "20": {
+        "inline": {
+          "processed": 600,
+          "mean_accept_lag_s": 883.52,
+          "max_accept_lag_s": 1767.05,
+          "mean_complete_lag_s": 886.52,
+          "max_complete_lag_s": 1770.05,
+          "max_backlog": 590,
+          "overloaded": true
+        },
+        "async": {
+          "processed": 600,
+          "mean_accept_lag_s": 0.0,
+          "max_accept_lag_s": 0.0,
+          "mean_complete_lag_s": 436.55,
+          "max_complete_lag_s": 870.1,
+          "max_backlog": 580,
+          "overloaded": true
+        }
+      }
+    },
+    "_elapsed_s": 0.0
+  }
+}

@@ -1,0 +1,27 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+build/
+dist/
+
+# local config
+.env
+
+# data & models (regenerated; large)
+data/zeek/*.log
+data/chroma/
+data/models/
+data/cicids2018/*.csv
+data/cicids2018/*.parquet
+data/cve/
+data/lab/
+data/hrt.sqlite3*
+data/mitre/*.bak
+data/mitre/*.json
+data/logs/
+
+# Ollama runtime log
+ollama-serve.log

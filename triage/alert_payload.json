@@ -1,8 +1,0 @@
-[
-    {
-        "source_ip": "172.18.0.3",
-        "unique_ports_targeted": 5,
-        "total_flows": 5,
-        "alert_trigger_time": "2026-08-15T05:51:25.615741"
-    }
-]

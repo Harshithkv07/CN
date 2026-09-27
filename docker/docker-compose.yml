@@ -1,0 +1,58 @@
+name: hrt
+
+services:
+  # The protected server. Zeek watches its interface; the agent deploys iptables rules here.
+  victim:
+    build: ./victim
+    container_name: hrt-victim
+    hostname: victim
+    cap_add: [NET_ADMIN, NET_RAW]
+    networks:
+      hrt-net:
+        ipv4_address: 10.10.0.10
+    expose: ["80", "22"]
+
+  # Passive sensor: shares the victim's network stack and writes JSON conn.log to ./data/zeek.
+  zeek:
+    image: zeek/zeek:latest
+    container_name: hrt-zeek
+    depends_on: [victim]
+    cap_add: [NET_ADMIN, NET_RAW]
+    network_mode: "service:victim"
+    command: ["zeek", "-i", "eth0", "-C", "/opt/hrt/local.zeek"]
+    volumes:
+      - ../data/zeek:/opt/zeek/logs/current
+      - ./zeek/local.zeek:/opt/hrt/local.zeek:ro
+    working_dir: /opt/zeek/logs/current
+
+  # Benign client: periodic HTTP/SSH to make a realistic baseline.
+  benign:
+    build: ./attacker
+    container_name: hrt-benign
+    depends_on: [victim]
+    networks:
+      hrt-net:
+        ipv4_address: 10.10.0.50
+    entrypoint: ["sh", "/opt/benign.sh"]
+    volumes:
+      - ./attacker/benign.sh:/opt/benign.sh:ro
+    restart: unless-stopped
+
+  # Attacker: idle until `hrt lab attack ...` runs a tool in it.
+  attacker:
+    build: ./attacker
+    container_name: hrt-attacker
+    depends_on: [victim]
+    networks:
+      hrt-net:
+        ipv4_address: 10.10.0.66
+    command: ["sleep", "infinity"]
+
+networks:
+  hrt-net:
+    name: hrt-net
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.10.0.0/24
+          gateway: 10.10.0.1
