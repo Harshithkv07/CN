@@ -71,6 +71,14 @@ def pct(x, digits=0) -> str:
     return "-" if x is None else f"{x * 100:.{digits}f}%"
 
 
+def pct_exact(x) -> str:
+    """Percentage with one decimal only when needed: 1.0 -> '100%', 0.475 -> '47.5%'."""
+    if x is None:
+        return "-"
+    v = round(x * 100, 1)
+    return f"{v:.0f}%" if v == int(v) else f"{v:.1f}%"
+
+
 # ------------------------------------------------------------------------------------------
 # slide helpers (all geometry mirrors the original slides 7-8)
 # ------------------------------------------------------------------------------------------
@@ -275,7 +283,7 @@ def _style_chart(chart, title: str, pct_axis: bool, max_val=None, legend=True, f
 
 
 def bar_chart(slide, x, y, w, h, categories, series: list[tuple[str, list, RGBColor]], title,
-              pct_axis=True, horizontal=False, labels=True, legend=True, gap=80):
+              pct_axis=True, horizontal=False, labels=True, legend=True, gap=80, label_format=None):
     cd = CategoryChartData()
     cd.categories = categories
     for name, vals, _ in series:
@@ -297,7 +305,7 @@ def bar_chart(slide, x, y, w, h, categories, series: list[tuple[str, list, RGBCo
         dl = plot.data_labels
         dl.font.size = Pt(10)
         dl.font.color.rgb = TEXT
-        dl.number_format = "0%" if pct_axis else "General"
+        dl.number_format = label_format or ("0%" if pct_axis else "General")
         dl.number_format_is_linked = False
         dl.position = XL_LABEL_POSITION.OUTSIDE_END
     return chart
@@ -729,8 +737,8 @@ def s_guardrail(prs, g):
 
 def s_ablation(prs, agent):
     s = blank_slide(prs, "Results: Incident Attribution & RAG Ablation", notes=(
-        "Same local LLM, same alerts, three modes. This isolates what retrieval grounding buys. The example ID "
-        "comes from results/agent_probe_norag.txt, which prints what the no-RAG model answered attempt by attempt."))
+        "Same local LLM, same alerts, three modes. This isolates what retrieval grounding buys. The example ID is "
+        "the no-RAG answer recorded most often in results/agent.json (details); hierarchical and flat RAG gave identical answers."))
     if agent is None or "rag_hier" not in agent:
         pending(s, "the agent (RAG ablation) evaluation")
         return
@@ -739,15 +747,16 @@ def s_ablation(prs, agent):
     for k, label in modes:
         if k in agent:
             m = agent[k]
-            rows.append([label, pct(m["technique_accuracy"]), pct(m["tactic_accuracy"]), pct(m["grounding_rate"]),
-                         pct(m["invalid_id_rate"]), pct(m["rule_valid_rate"]), pct(m["escalation_rate"])])
+            rows.append([label] + [pct_exact(m[k]) for k in ("technique_accuracy", "tactic_accuracy", "grounding_rate",
+                                                              "invalid_id_rate", "rule_valid_rate", "escalation_rate")])
     table(s, rows, Inches(0.92), Inches(1.55), [3.2, 1.45, 1.35, 1.3, 1.35, 1.5, 1.35], font=13, row_h=0.45,
           highlight_rows={len(rows) - 1})
     present = [(k, label) for k, label in modes if k in agent]
     bar_chart(s, Inches(0.92), Inches(3.55), Inches(6.6), Inches(3.4), [lbl for _, lbl in present],
               [("Technique accuracy", [agent[k]["technique_accuracy"] for k, _ in present], ACCENT1),
                ("Invalid technique IDs", [agent[k]["invalid_id_rate"] for k, _ in present], ACCENT2)],
-              "Attribution accuracy vs hallucinated IDs", gap=70)
+              "Attribution accuracy vs hallucinated IDs", gap=70,
+              label_format="[=1]0%;[=0]0%;0.0%")        # 100% and 0% stay whole; 47.5% keeps its decimal
     meta = agent.get("meta", {})
     retr = agent.get("retrieval", {})
     ret = retr.get("hierarchical", {})
@@ -758,13 +767,15 @@ def s_ablation(prs, agent):
     invented = round(nr.get("invalid_id_rate", 0) * n_int)
     tac = round(nr.get("tactic_accuracy", 0) * n_int)
     tac_txt = "no tactic is right" if tac == 0 else f"{tac} of {n} tactics are right"
+    fake = [d.get("technique") for d in nr.get("details", []) if d.get("known") is False and d.get("technique")]
+    example = max(set(fake), key=fake.count) if fake else "T1210.001"   # fallback: seen in agent_probe_norag.txt
     tie = agent["rag_flat"]["technique_accuracy"] == agent["rag_hier"]["technique_accuracy"] if "rag_flat" in agent else False
     red = retr.get("avg_search_space_reduction")
     textbox(s, Inches(7.8), Inches(3.55), Inches(4.62), Inches(3.45), [
         [("Setup: ", True), (f"{n} alerts synthesised from CICIDS2018 ({len(classes)} classes), same local "
                              f"{meta.get('llm', 'LLM').replace('ollama:', '')} in all three modes.", False)],
         [("Without RAG: ", True), (f"{invented} of {n} answers cite technique IDs that do not exist in ATT&CK (e.g. "
-                                   f"T1210.001), and {tac_txt}.", False)],
+                                   f"{example}), and {tac_txt}.", False)],
         [("With RAG: ", True), ("every ID is real and grounded; recall@1 "
                                 f"{pct(ret.get('recall@1'))}." + (
                                     f" Flat and hierarchical tie on accuracy here; the hierarchy's gain is a "
@@ -889,8 +900,8 @@ def s_conclusion(prs, g, tele, agent, live):
     t_txt = f" ({tele['median_alert_reduction']:.2%} smaller, median)" if tele else ""
     h_txt = ""
     if agent and "no_rag" in agent and "rag_hier" in agent:
-        h_txt = (f" (invented IDs: {agent['no_rag']['invalid_id_rate']:.0%} without RAG, "
-                 f"{agent['rag_hier']['invalid_id_rate']:.0%} with)")
+        h_txt = (f" (invented IDs: {pct_exact(agent['no_rag']['invalid_id_rate'])} without RAG, "
+                 f"{pct_exact(agent['rag_hier']['invalid_id_rate'])} with)")
     l_txt = ""
     if live and live.get("summary"):
         worst = max(v["max_s"] for v in live["summary"].values())

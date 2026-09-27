@@ -54,7 +54,8 @@ On Windows you can instead double-click `scripts\start_orchestrator.cmd` and
 
 ## 3. Run the demo
 
-Either the scripted version (Terminal D):
+Either the scripted version (Terminal D), which clears old incidents and the firewall, launches the
+scan, waits for the verified rule, approves it and shows it deployed (about 100 s on CPU):
 ```bash
 hrt demo
 ```

@@ -1,0 +1,10 @@
+# Normalise line endings so a Windows checkout still runs inside the Linux lab containers.
+* text=auto
+*.sh text eol=lf
+*.rules text eol=lf
+*.zeek text eol=lf
+docker/** text eol=lf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+*.png binary
+*.parquet binary

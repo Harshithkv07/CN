@@ -75,6 +75,7 @@ close the window to stop that piece.
 | `start_triage.cmd` | `hrt triage` (tails `data\zeek\conn.log`) | `data\logs\triage.log` |
 | `run_live_benchmark.cmd` | `hrt eval live` (needs lab + the two above) | `data\logs\live.log` |
 | `run_agent_eval.cmd` | `hrt eval agent --fast` (~40 min on CPU) | `data\logs\agent.log` |
+| `run_agent_eval_full.cmd` | `hrt eval agent` (10 alerts per class, ~2.5 h on CPU) | `data\logs\agent_full.log` |
 
 ## Evaluation
 
@@ -98,7 +99,7 @@ Full tables and charts are in [`results/summary.md`](results/summary.md). Headli
 | **Telemetry reduction** (634,464 Zeek records, 242 MB) | median alert is **99.82 %** smaller than the flows it summarises; everything logged vs everything sent to the LLM: **99.997 %** smaller |
 | **Async vs inline LLM** (3 s inference, 2 workers) | inline ingest lag grows to 58 s at 1 alert/s and 1,767 s at 20/s; async webhook + queue stays at 0 s |
 | **Tier-1 detection** (CICIDS2018, 34,105 flows) | SIEM-style rules F1 0.978; Isolation Forest (unsupervised, benign-only) P 0.93 / R 0.53 / ROC-AUC 0.96 — catches brute force (recall ≈1.0), misses volumetric DoS/DDoS, which the rules cover; supervised RF ≈1.0 as an upper bound |
-| **Incident attribution / RAG ablation** (12 CICIDS incidents: DDoS-HOIC, DoS-Hulk, FTP & SSH brute force) | with RAG (flat or hierarchical): **12/12** correct technique and tactic, 0 invented IDs, 12/12 verified rules. **Without RAG: 1/12 technique, 0/12 tactic, 5/12 cite ATT&CK IDs that don't exist** (e.g. `T1210.001`), 1 escalation. Tactic prefilter cuts the search space by 92.8 % with recall@1 = 1.0 |
+| **Incident attribution / RAG ablation** (40 CICIDS incidents, 10 each: DDoS-HOIC, DoS-Hulk, FTP & SSH brute force) | with RAG (flat or hierarchical): **40/40** correct technique and tactic, 0 invented IDs, 40/40 verified rules. **Without RAG: 1/40 technique, 0/40 tactic, 19/40 cite ATT&CK IDs that don't exist** (e.g. `T1210.001`), DoS/DDoS labelled as brute force, 1 escalation. Tactic prefilter cuts the search space by 92.8 % with recall@1 = 1.0 |
 
 ## Layout
 
@@ -130,15 +131,17 @@ results/       measured results (JSON), summary.md, charts
 - Search-space reduction and telemetry-reduction figures are **measured per run**, not assumed.
 - The Isolation Forest is weak on volumetric DoS/DDoS in CICIDS2018 (recall 0.21 / 0.00); the
   deterministic rules carry those classes. The two are complementary, which is why Tier 1 is hybrid.
-- The agent evaluation is small (12 incidents, 4 CICIDS classes, `--fast`) because each incident
-  costs 1-2 minutes of CPU inference. On it, flat and hierarchical RAG tie at 100 %; the
-  hierarchy's measured benefit here is the 92.8 % smaller search space, not higher accuracy.
-- The 3B model rarely gets the `iptables` rule right first time. All 9 live-lab incidents needed 3
-  attempts (in the one inspected, both rejections came from the policy check, e.g. no `-A/-I`
-  chain), and in the no-RAG
-  probe (`results/agent_probe_norag.txt`) each incident failed the policy check, then the conflict
-  check (an `-A` rule shadowed by an existing ACCEPT), and passed on attempt 3 using the verifier's
-  feedback. The Tier-3 loop is what turns the small model's output into a safe rule.
+- The agent evaluation covers 40 incidents from 4 CICIDS classes (each costs 1-2 minutes of CPU
+  inference, 2 h 49 min for all three modes). Flat and hierarchical RAG tie at 100 % and gave
+  identical answers on every incident: for these attack types flat search already ranks the right
+  techniques first, so the hierarchy's measured benefit here is the 92.8 % smaller search space,
+  not higher accuracy. Harder or more ambiguous classes would be needed to separate them.
+- With the 3B model no incident passed verification on the first attempt. Across the 40-incident run, 36
+  incidents needed 3 attempts and 4 needed 2; all 9 live-lab incidents needed 3. In the no-RAG
+  probe (`results/agent_probe_norag.txt`) each incident failed the policy check (no `-A/-I` chain),
+  then the conflict check (an `-A` rule shadowed by an existing ACCEPT), and passed on attempt 3
+  using the verifier's feedback. The Tier-3 loop is what turns the small model's output into a
+  safe rule.
 - The live lab runs every attack from one attacker (10.10.0.66); the benchmark resets the victim
   firewall and incident store between runs so earlier blocks don't skew later ones.
 - On this machine Windows Smart App Control blocks some unsigned scikit-learn DLLs, so PyOD is

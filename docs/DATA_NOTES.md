@@ -98,22 +98,26 @@ launched from inside an automation session (a scripted PowerShell `Start-Process
 
 ## Agent (RAG-ablation) evaluation run
 
-`results/agent.json` comes from `hrt eval agent --fast` on 2026-09-27 (12:35 to 13:14, 40 min):
-3 synthesised incidents per class for 4 classes (DDoS-HOIC, DoS-Hulk, FTP-BruteForce,
-SSH-Bruteforce), each class given its own TEST-NET-2 attacker (brute force 198.51.100.11, DoS .21,
-DDoS .31). Each incident goes through all three modes, `rag_hier`, `rag_flat` and `no_rag`, with the
-same local model (`llama3.2:3b`) and the real guardrail, including the kernel sandbox.
+`results/agent.json` comes from the full `hrt eval agent` run on 2026-09-27 (14:55 to 17:45,
+2 h 49 min): 10 synthesised incidents per class for 4 classes (DDoS-HOIC, DoS-Hulk,
+FTP-BruteForce, SSH-Bruteforce), 40 in total. Each class has its own TEST-NET-2 attacker
+(brute force 198.51.100.11, DoS .21, DDoS .31). Every incident goes through all three modes,
+`rag_hier`, `rag_flat` and `no_rag`, with the same local model (`llama3.2:3b`) and the real
+guardrail, including the kernel sandbox. Each mode's `details` list records the cited technique,
+whether it exists in ATT&CK, the tactic, the number of attempts and the final status for every
+incident.
 
-- An earlier attempt at 11:52 stopped after about a minute, before finishing any incident. The
-  Ollama server stopped at the same moment, Docker Desktop was later also found stopped, and no log
-  shows an error.
-  It is kept as `data/logs/agent.failed-1153.log`. The run above is a clean relaunch.
-- That run recorded only aggregate metrics. Per-incident rows (`details`: technique, tactic,
-  attempts, status) are recorded from now on. To show what the no-RAG model actually answers, a
-  separate 4-incident probe (`scripts/probe_norag.py`) was run afterwards. Its output is
-  `results/agent_probe_norag.txt`. It reproduces the aggregate picture: wrong or non-existent
-  technique IDs (for example `T1110.001` for a DDoS, or `T1210.001`, which does not exist) and
-  non-tactic strings in the tactic field.
+- `rag_hier` and `rag_flat` gave identical answers on all 40 incidents: T1499.003 for DoS and DDoS,
+  and T1110.001 or T1110.003 for brute force. The accuracy tie is therefore real, not noise.
+- `no_rag` labelled every DoS and DDoS incident as T1110.001 (a brute-force technique). For brute
+  force it cited `T1210.001` or `T1190.001`, neither of which exists, 19 of 40 times. The tactic
+  field held technique IDs (such as `T1210` or `T1003`) or wrong tactics every time.
+- History: an earlier `--fast` run (3 per class, 12 incidents, 12:35 to 13:14) showed the same pattern
+  (12/12 with RAG; without RAG 1/12 technique and 5/12 invented IDs). It is preserved in git commit
+  `8e05d71`. The attempt before that, at 11:52, stopped after a minute together with the Ollama
+  server, with no error in any log (local log `data/logs/agent.failed-1153.log`, not committed).
+- `results/agent_probe_norag.txt` (from `scripts/probe_norag.py`) prints one no-RAG incident per
+  class attempt by attempt, including the guardrail feedback behind each retry.
 
 ## Lab capture used for the telemetry measurement
 

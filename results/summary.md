@@ -43,19 +43,21 @@ The regex baseline dangerously accepted 17 unsafe rules: `inject_semicolon, inje
 
 ## 3. Incident attribution & RAG ablation
 
-LLM: `ollama:llama3.2:3b`, 12 synthesised incidents.
+LLM: `ollama:llama3.2:3b`, 40 synthesised incidents.
 
 | Mode | Technique acc. | Tactic acc. | Grounding | Invalid-ID | Rule-valid | Escalation |
 |---|---|---|---|---|---|---|
-| no_rag | 0.0833 | 0.0 | 0.0 | 0.4167 | 0.9167 | 0.0833 |
+| no_rag | 0.025 | 0.0 | 0.0 | 0.475 | 0.975 | 0.025 |
 | rag_flat | 1.0 | 1.0 | 1.0 | 0.0 | 1.0 | 0.0 |
 | rag_hier | 1.0 | 1.0 | 1.0 | 0.0 | 1.0 | 0.0 |
 
-Median analysis latency (s): rag_hier 93.61, rag_flat 56.05, no_rag 52.29.
+Median analysis latency (s): rag_hier 97.98, rag_flat 103.53, no_rag 56.13.
+
+LLM attempts per incident (the guardrail feeds each rejection back): rag_hier 2 attempts x4, 3 attempts x36; rag_flat 2 attempts x4, 3 attempts x36; no_rag 3 attempts x40.
 
 Hierarchical retrieval: recall@1 1.0, recall@3 1.0, recall@5 1.0; the tactic prefilter shrinks the search space by 92.8% on average.
 
-Scoring: a technique counts as correct when it (or its parent technique) is in the accepted set for the true CICIDS label (`eval/labels.py`); tactics are compared after case/space normalisation. Invalid-ID = the cited ID is not in the local ATT&CK catalogue.
+Scoring: a technique counts as correct when it (or its parent technique) is in the accepted set for the true CICIDS label (`eval/labels.py`); tactics are compared after case/space normalisation. Invalid-ID = the cited ID is not in the local ATT&CK catalogue. Classes: DDOS attack-HOIC, DoS attacks-Hulk, FTP-BruteForce, SSH-Bruteforce.
 
 What the no-RAG model actually answered, attempt by attempt, is in [`agent_probe_norag.txt`](agent_probe_norag.txt).
 

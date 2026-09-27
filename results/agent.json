@@ -1,36 +1,1125 @@
 {
   "suite": "agent",
-  "generated_at": "2026-09-27 13:14:34",
+  "generated_at": "2026-09-27 17:44:58",
   "result": {
     "rag_hier": {
-      "n": 12,
+      "n": 40,
       "technique_accuracy": 1.0,
       "tactic_accuracy": 1.0,
       "grounding_rate": 1.0,
       "invalid_id_rate": 0.0,
       "rule_valid_rate": 1.0,
       "escalation_rate": 0.0,
-      "median_latency_s": 93.61
+      "median_latency_s": 97.98,
+      "median_attempts": 3,
+      "details": [
+        {
+          "label": "DDOS attack-HOIC",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1499.003",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": true
+        },
+        {
+          "label": "DDOS attack-HOIC",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1499.003",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": true
+        },
+        {
+          "label": "DDOS attack-HOIC",
+          "status": "SAFE",
+          "attempts": 2,
+          "technique": "T1499.003",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": true
+        },
+        {
+          "label": "DDOS attack-HOIC",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1499.003",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": true
+        },
+        {
+          "label": "DDOS attack-HOIC",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1499.003",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": true
+        },
+        {
+          "label": "DDOS attack-HOIC",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1499.003",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": true
+        },
+        {
+          "label": "DDOS attack-HOIC",
+          "status": "SAFE",
+          "attempts": 2,
+          "technique": "T1499.003",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": true
+        },
+        {
+          "label": "DDOS attack-HOIC",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1499.003",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": true
+        },
+        {
+          "label": "DDOS attack-HOIC",
+          "status": "SAFE",
+          "attempts": 2,
+          "technique": "T1499.003",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": true
+        },
+        {
+          "label": "DDOS attack-HOIC",
+          "status": "SAFE",
+          "attempts": 2,
+          "technique": "T1499.003",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": true
+        },
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1499.003",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": true
+        },
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1499.003",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": true
+        },
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1499.003",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": true
+        },
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1499.003",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": true
+        },
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1499.003",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": true
+        },
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1499.003",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": true
+        },
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1499.003",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": true
+        },
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1499.003",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": true
+        },
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1499.003",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": true
+        },
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1499.003",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": true
+        },
+        {
+          "label": "FTP-BruteForce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.003",
+          "known": true,
+          "tactic": "credential-access",
+          "technique_ok": true
+        },
+        {
+          "label": "FTP-BruteForce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "credential-access",
+          "technique_ok": true
+        },
+        {
+          "label": "FTP-BruteForce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.003",
+          "known": true,
+          "tactic": "credential-access",
+          "technique_ok": true
+        },
+        {
+          "label": "FTP-BruteForce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.003",
+          "known": true,
+          "tactic": "credential-access",
+          "technique_ok": true
+        },
+        {
+          "label": "FTP-BruteForce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "credential-access",
+          "technique_ok": true
+        },
+        {
+          "label": "FTP-BruteForce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "credential-access",
+          "technique_ok": true
+        },
+        {
+          "label": "FTP-BruteForce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "credential-access",
+          "technique_ok": true
+        },
+        {
+          "label": "FTP-BruteForce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "credential-access",
+          "technique_ok": true
+        },
+        {
+          "label": "FTP-BruteForce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "credential-access",
+          "technique_ok": true
+        },
+        {
+          "label": "FTP-BruteForce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "credential-access",
+          "technique_ok": true
+        },
+        {
+          "label": "SSH-Bruteforce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "credential-access",
+          "technique_ok": true
+        },
+        {
+          "label": "SSH-Bruteforce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "credential-access",
+          "technique_ok": true
+        },
+        {
+          "label": "SSH-Bruteforce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "credential-access",
+          "technique_ok": true
+        },
+        {
+          "label": "SSH-Bruteforce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.003",
+          "known": true,
+          "tactic": "credential-access",
+          "technique_ok": true
+        },
+        {
+          "label": "SSH-Bruteforce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "credential-access",
+          "technique_ok": true
+        },
+        {
+          "label": "SSH-Bruteforce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.003",
+          "known": true,
+          "tactic": "credential-access",
+          "technique_ok": true
+        },
+        {
+          "label": "SSH-Bruteforce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.003",
+          "known": true,
+          "tactic": "credential-access",
+          "technique_ok": true
+        },
+        {
+          "label": "SSH-Bruteforce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "credential-access",
+          "technique_ok": true
+        },
+        {
+          "label": "SSH-Bruteforce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "credential-access",
+          "technique_ok": true
+        },
+        {
+          "label": "SSH-Bruteforce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.003",
+          "known": true,
+          "tactic": "credential-access",
+          "technique_ok": true
+        }
+      ]
     },
     "rag_flat": {
-      "n": 12,
+      "n": 40,
       "technique_accuracy": 1.0,
       "tactic_accuracy": 1.0,
       "grounding_rate": 1.0,
       "invalid_id_rate": 0.0,
       "rule_valid_rate": 1.0,
       "escalation_rate": 0.0,
-      "median_latency_s": 56.05
+      "median_latency_s": 103.53,
+      "median_attempts": 3,
+      "details": [
+        {
+          "label": "DDOS attack-HOIC",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1499.003",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": true
+        },
+        {
+          "label": "DDOS attack-HOIC",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1499.003",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": true
+        },
+        {
+          "label": "DDOS attack-HOIC",
+          "status": "SAFE",
+          "attempts": 2,
+          "technique": "T1499.003",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": true
+        },
+        {
+          "label": "DDOS attack-HOIC",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1499.003",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": true
+        },
+        {
+          "label": "DDOS attack-HOIC",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1499.003",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": true
+        },
+        {
+          "label": "DDOS attack-HOIC",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1499.003",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": true
+        },
+        {
+          "label": "DDOS attack-HOIC",
+          "status": "SAFE",
+          "attempts": 2,
+          "technique": "T1499.003",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": true
+        },
+        {
+          "label": "DDOS attack-HOIC",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1499.003",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": true
+        },
+        {
+          "label": "DDOS attack-HOIC",
+          "status": "SAFE",
+          "attempts": 2,
+          "technique": "T1499.003",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": true
+        },
+        {
+          "label": "DDOS attack-HOIC",
+          "status": "SAFE",
+          "attempts": 2,
+          "technique": "T1499.003",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": true
+        },
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1499.003",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": true
+        },
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1499.003",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": true
+        },
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1499.003",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": true
+        },
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1499.003",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": true
+        },
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1499.003",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": true
+        },
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1499.003",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": true
+        },
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1499.003",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": true
+        },
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1499.003",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": true
+        },
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1499.003",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": true
+        },
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1499.003",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": true
+        },
+        {
+          "label": "FTP-BruteForce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.003",
+          "known": true,
+          "tactic": "credential-access",
+          "technique_ok": true
+        },
+        {
+          "label": "FTP-BruteForce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "credential-access",
+          "technique_ok": true
+        },
+        {
+          "label": "FTP-BruteForce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.003",
+          "known": true,
+          "tactic": "credential-access",
+          "technique_ok": true
+        },
+        {
+          "label": "FTP-BruteForce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.003",
+          "known": true,
+          "tactic": "credential-access",
+          "technique_ok": true
+        },
+        {
+          "label": "FTP-BruteForce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "credential-access",
+          "technique_ok": true
+        },
+        {
+          "label": "FTP-BruteForce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "credential-access",
+          "technique_ok": true
+        },
+        {
+          "label": "FTP-BruteForce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "credential-access",
+          "technique_ok": true
+        },
+        {
+          "label": "FTP-BruteForce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "credential-access",
+          "technique_ok": true
+        },
+        {
+          "label": "FTP-BruteForce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "credential-access",
+          "technique_ok": true
+        },
+        {
+          "label": "FTP-BruteForce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "credential-access",
+          "technique_ok": true
+        },
+        {
+          "label": "SSH-Bruteforce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "credential-access",
+          "technique_ok": true
+        },
+        {
+          "label": "SSH-Bruteforce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "credential-access",
+          "technique_ok": true
+        },
+        {
+          "label": "SSH-Bruteforce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "credential-access",
+          "technique_ok": true
+        },
+        {
+          "label": "SSH-Bruteforce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.003",
+          "known": true,
+          "tactic": "credential-access",
+          "technique_ok": true
+        },
+        {
+          "label": "SSH-Bruteforce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "credential-access",
+          "technique_ok": true
+        },
+        {
+          "label": "SSH-Bruteforce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.003",
+          "known": true,
+          "tactic": "credential-access",
+          "technique_ok": true
+        },
+        {
+          "label": "SSH-Bruteforce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.003",
+          "known": true,
+          "tactic": "credential-access",
+          "technique_ok": true
+        },
+        {
+          "label": "SSH-Bruteforce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "credential-access",
+          "technique_ok": true
+        },
+        {
+          "label": "SSH-Bruteforce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "credential-access",
+          "technique_ok": true
+        },
+        {
+          "label": "SSH-Bruteforce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.003",
+          "known": true,
+          "tactic": "credential-access",
+          "technique_ok": true
+        }
+      ]
     },
     "no_rag": {
-      "n": 12,
-      "technique_accuracy": 0.0833,
+      "n": 40,
+      "technique_accuracy": 0.025,
       "tactic_accuracy": 0.0,
       "grounding_rate": 0.0,
-      "invalid_id_rate": 0.4167,
-      "rule_valid_rate": 0.9167,
-      "escalation_rate": 0.0833,
-      "median_latency_s": 52.29
+      "invalid_id_rate": 0.475,
+      "rule_valid_rate": 0.975,
+      "escalation_rate": 0.025,
+      "median_latency_s": 56.13,
+      "median_attempts": 3,
+      "details": [
+        {
+          "label": "DDOS attack-HOIC",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "T1210.001",
+          "technique_ok": false
+        },
+        {
+          "label": "DDOS attack-HOIC",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "Reconnaissance",
+          "technique_ok": false
+        },
+        {
+          "label": "DDOS attack-HOIC",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "T1210.001",
+          "technique_ok": false
+        },
+        {
+          "label": "DDOS attack-HOIC",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "T1003",
+          "technique_ok": false
+        },
+        {
+          "label": "DDOS attack-HOIC",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "T1003",
+          "technique_ok": false
+        },
+        {
+          "label": "DDOS attack-HOIC",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "T1210.001",
+          "technique_ok": false
+        },
+        {
+          "label": "DDOS attack-HOIC",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "T1003 - Exploitation of Functionality",
+          "technique_ok": false
+        },
+        {
+          "label": "DDOS attack-HOIC",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "T1210",
+          "technique_ok": false
+        },
+        {
+          "label": "DDOS attack-HOIC",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "T1210.001",
+          "technique_ok": false
+        },
+        {
+          "label": "DDOS attack-HOIC",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "Reconnaissance",
+          "technique_ok": false
+        },
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "T1210.001",
+          "technique_ok": false
+        },
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "Persistence",
+          "technique_ok": false
+        },
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "T1003",
+          "technique_ok": false
+        },
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "T1210.001",
+          "technique_ok": false
+        },
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "T1003",
+          "technique_ok": false
+        },
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "T1210.001",
+          "technique_ok": false
+        },
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "T1210.001",
+          "technique_ok": false
+        },
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "T1210 - Lateral Movement",
+          "technique_ok": false
+        },
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "T1003",
+          "technique_ok": false
+        },
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "T1003",
+          "technique_ok": false
+        },
+        {
+          "label": "FTP-BruteForce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1190.001",
+          "known": false,
+          "tactic": "Tactic 1: Execution",
+          "technique_ok": false
+        },
+        {
+          "label": "FTP-BruteForce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1210.001",
+          "known": false,
+          "tactic": "T1210",
+          "technique_ok": false
+        },
+        {
+          "label": "FTP-BruteForce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1210.001",
+          "known": false,
+          "tactic": "T1210",
+          "technique_ok": false
+        },
+        {
+          "label": "FTP-BruteForce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1210.001",
+          "known": false,
+          "tactic": "T1210",
+          "technique_ok": false
+        },
+        {
+          "label": "FTP-BruteForce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1210.001",
+          "known": false,
+          "tactic": "T1210",
+          "technique_ok": false
+        },
+        {
+          "label": "FTP-BruteForce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1210.001",
+          "known": false,
+          "tactic": "T1210",
+          "technique_ok": false
+        },
+        {
+          "label": "FTP-BruteForce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1210.001",
+          "known": false,
+          "tactic": "T1210",
+          "technique_ok": false
+        },
+        {
+          "label": "FTP-BruteForce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1210.001",
+          "known": false,
+          "tactic": "T1210",
+          "technique_ok": false
+        },
+        {
+          "label": "FTP-BruteForce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1210.001",
+          "known": false,
+          "tactic": "Lateral Movement",
+          "technique_ok": false
+        },
+        {
+          "label": "FTP-BruteForce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1210.001",
+          "known": false,
+          "tactic": "T1210",
+          "technique_ok": false
+        },
+        {
+          "label": "SSH-Bruteforce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1190.001",
+          "known": false,
+          "tactic": "T1210 - Lateral Movement",
+          "technique_ok": false
+        },
+        {
+          "label": "SSH-Bruteforce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1210.001",
+          "known": false,
+          "tactic": "T1210",
+          "technique_ok": false
+        },
+        {
+          "label": "SSH-Bruteforce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1190.001",
+          "known": false,
+          "tactic": "T1210 - Lateral Movement",
+          "technique_ok": false
+        },
+        {
+          "label": "SSH-Bruteforce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1210.001",
+          "known": false,
+          "tactic": "T1210",
+          "technique_ok": false
+        },
+        {
+          "label": "SSH-Bruteforce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1210.001",
+          "known": false,
+          "tactic": "T1210",
+          "technique_ok": false
+        },
+        {
+          "label": "SSH-Bruteforce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1210.001",
+          "known": false,
+          "tactic": "T1210",
+          "technique_ok": false
+        },
+        {
+          "label": "SSH-Bruteforce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1210.001",
+          "known": false,
+          "tactic": "T1210",
+          "technique_ok": false
+        },
+        {
+          "label": "SSH-Bruteforce",
+          "status": "ESCALATED",
+          "attempts": 3,
+          "technique": "T1210.001",
+          "known": false,
+          "tactic": "T1210",
+          "technique_ok": false
+        },
+        {
+          "label": "SSH-Bruteforce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "T1003",
+          "technique_ok": true
+        },
+        {
+          "label": "SSH-Bruteforce",
+          "status": "SAFE",
+          "attempts": 3,
+          "technique": "T1190.001",
+          "known": false,
+          "tactic": "T1190",
+          "technique_ok": false
+        }
+      ]
     },
     "retrieval": {
       "hierarchical": {
@@ -42,9 +1131,15 @@
     },
     "meta": {
       "llm": "ollama:llama3.2:3b",
-      "incidents": 12,
-      "per_class": 3
+      "incidents": 40,
+      "per_class": 10,
+      "classes": [
+        "DDOS attack-HOIC",
+        "DoS attacks-Hulk",
+        "FTP-BruteForce",
+        "SSH-Bruteforce"
+      ]
     },
-    "_elapsed_s": 2372.3
+    "_elapsed_s": 10152.5
   }
 }

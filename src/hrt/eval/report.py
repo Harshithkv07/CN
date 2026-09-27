@@ -198,7 +198,14 @@ def build(settings: Settings) -> Path:
                          for d in agent.get(md, {}).get("details", [])})
         L += ["", "Median analysis latency (s): " + ", ".join(
                   f"{md} {agent[md]['median_latency_s']}" for md in ("rag_hier", "rag_flat", "no_rag") if md in agent)
-              + ".", "",
+              + ".", ""]
+        att = {md: [d["attempts"] for d in agent[md].get("details", [])] for md in ("rag_hier", "rag_flat", "no_rag")
+               if md in agent}
+        if any(att.values()):
+            L += ["LLM attempts per incident (the guardrail feeds each rejection back): " + "; ".join(
+                      f"{md} " + ", ".join(f"{a} attempt{'s' if a > 1 else ''} x{v.count(a)}" for a in sorted(set(v)))
+                      for md, v in att.items() if v) + ".", ""]
+        L += [
               "Hierarchical retrieval: " + ", ".join(f"{k} {v}" for k, v in rk.items())
               + f"; the tactic prefilter shrinks the search space by "
               f"{ret.get('avg_search_space_reduction', 0)*100:.1f}% on average.", "",
