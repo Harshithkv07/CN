@@ -9,9 +9,11 @@ rules wait for analyst approval unless auto-deploy is on.
 from __future__ import annotations
 
 import asyncio
+import json
 import logging
 import queue
 import threading
+from collections import deque
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException, Request
@@ -49,6 +51,8 @@ class Orchestrator:
         self.guardrail = Guardrail(settings, self.sandbox if self._sandbox_ok else None, self.store.deployed_rules)
         self.retriever: Retriever | None = None
         self.stats = {"flows_total": 0, "alerts_total": 0, "raw_bytes_total": 0, "alert_bytes_total": 0}
+        self.history: deque = deque(maxlen=180)      # recent stats points, so a page opened late has a sparkline
+        self.lab_jobs: list[dict] = []
 
     def _lazy_retriever(self) -> Retriever | None:
         if self.retriever is None and self.settings.chroma_dir.exists():
@@ -151,6 +155,7 @@ def create_app(settings: Settings | None = None, workers: int = 2, auto_deploy: 
     @app.post("/webhook/stats")
     async def webhook_stats(request: Request):
         orch.stats.update(await request.json())
+        orch.history.append({k: orch.stats.get(k) for k in ("ts", "flows_per_s", "flows_total", "alerts_total")})
         orch.hub.publish("stats", orch.stats)
         return {"ok": True}
 
@@ -191,11 +196,48 @@ def create_app(settings: Settings | None = None, workers: int = 2, auto_deploy: 
             pass
         return {"cleared": cleared, "firewall_reset": fw_ok}
 
+    @app.get("/api/results")
+    async def results():
+        """Every evaluation JSON in results/, keyed by file name, for the evidence section of the site."""
+        out = {}
+        for prefix, folder in (("", settings.results_dir), ("v1_", settings.results_dir / "v1")):
+            for path in sorted(folder.glob("*.json")):
+                try:
+                    out[prefix + path.stem] = json.loads(path.read_text(encoding="utf-8"))
+                except (OSError, ValueError):
+                    continue
+        return out
+
+    @app.post("/api/lab/attack/{kind}")
+    async def lab_attack(kind: str, request: Request):
+        """Launch a lab attack from the attacker container (needs Docker). Local requests only."""
+        from hrt import lab
+
+        if request.client is None or request.client.host not in ("127.0.0.1", "::1", "localhost"):
+            raise HTTPException(403, "lab control is local-only")
+        if kind not in ("scan", "synflood", "sshbf", "beacon", "benign"):
+            raise HTTPException(400, f"unknown attack '{kind}'")
+        job = {"kind": kind, "started": __import__("time").time(), "state": "running"}
+        orch.lab_jobs.append(job)
+        orch.hub.publish("lab", job)
+
+        def go():
+            try:
+                lab.attack(kind)
+                job["state"] = "done"
+            except BaseException as exc:          # SystemExit from lab.attack included
+                job["state"] = f"failed: {exc}"
+            orch.hub.publish("lab", job)
+
+        threading.Thread(target=go, name=f"lab-{kind}", daemon=True).start()
+        return job
+
     @app.get("/api/summary")
     async def summary():
         return {"counts": orch.store.counts(), "stats": orch.stats, "sandbox": orch._sandbox_ok,
                 "auto_deploy": orch.auto_deploy, "rag": orch._lazy_retriever() is not None,
-                "firewall_rules": _safe_rules(orch)}
+                "firewall_rules": _safe_rules(orch), "history": list(orch.history),
+                "lab_jobs": orch.lab_jobs[-5:]}
 
     @app.get("/api/stream")
     async def stream():
@@ -220,7 +262,15 @@ def create_app(settings: Settings | None = None, workers: int = 2, auto_deploy: 
         return FileResponse(STATIC_DIR / "index.html")
 
     if STATIC_DIR.exists():
-        app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+        class FreshStatic(StaticFiles):
+            """Always revalidate: the site is edited between demos and a stale cached script is confusing."""
+
+            async def get_response(self, path, scope):
+                resp = await super().get_response(path, scope)
+                resp.headers["Cache-Control"] = "no-cache"
+                return resp
+
+        app.mount("/static", FreshStatic(directory=STATIC_DIR), name="static")
     return app
 
 

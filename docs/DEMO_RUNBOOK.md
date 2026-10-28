@@ -41,8 +41,9 @@ Terminal B — orchestrator + dashboard:
 ```bash
 hrt serve
 ```
-Open <http://localhost:8000>. The header pills should read *stream live*, *RAG ready*,
-*sandbox up*, *gated*.
+Open <http://localhost:8000>. The pill in the top bar should read *live · RAG · sandbox*.
+The attack buttons on the page start the same attacks as `hrt lab attack ...`, and
+**Replay a recorded run** plays real, previously captured incidents if the lab or the model is off.
 
 Terminal C — Tier-1 triage (tails Zeek, POSTs alerts to the orchestrator):
 ```bash
@@ -75,7 +76,7 @@ What to point at on the dashboard, in order:
    conflict → kernel `iptables-restore --test`. If an attempt fails (in the recorded runs
    the small model's first tries were rejected by the policy check, e.g. a missing `-A/-I`), the
    failure reason is fed back and the agent self-corrects; up to 3 attempts, then it escalates.
-   Expect roughly 1.5-3 minutes from attack to a SAFE rule on CPU.
+   Expect roughly 1-3 minutes from attack to a SAFE rule on CPU.
 4. **Approve & deploy** — click it; the rule is applied to the victim's firewall.
 
 ## 4. Prove it worked
@@ -92,6 +93,10 @@ hrt lab attack benign      # HTTP from an allowed host still succeeds
 ## 5. Optional talking points
 
 - `hrt lab attack synflood` and `hrt lab attack sshbf` show other techniques (T1499, T1110).
+- `hrt lab attack beacon` starts a simulated C2 implant (8 s check-ins, 25 times). Tier 1's long-window
+  rule alerts after six check-ins (about 50 s), the model attributes it to a command-and-control technique.
+- On the website, open the **Evidence** section: every chart is drawn from `results/*.json`.
+- Backup plan: `http://localhost:8000/?replay=1` starts the recorded run on load.
 - The subnet guardrail: if the model ever proposed blocking `10.10.0.0/24`, Tier 3 refuses it and
   escalates — no self-inflicted DoS.
 - `hrt eval guardrail` on the spot: HRT verifier vs a regex baseline on adversarial rules.

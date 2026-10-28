@@ -25,13 +25,14 @@ class Settings(BaseSettings):
     benign_score_quantile: float = 0.995   # IForest threshold = this quantile of benign scores
 
     # --- Tier 2: RAG + LLM ------------------------------------------------------------
-    llm_provider: str = "ollama"           # "ollama" | "fake"
+    llm_provider: str = "ollama"           # "ollama" | "langchain" | "fake"
     ollama_url: str = "http://127.0.0.1:11434"
     ollama_model: str = "llama3.2:3b"
     ollama_exe: Path = Path("D:/Ollama/app/ollama.exe")
     ollama_models_dir: Path = Path("D:/Ollama/models")
     llm_timeout_seconds: float = 600.0
     llm_num_ctx: int = 6144
+    llm_num_predict: int = 700             # the JSON reply is ~250 tokens; a cap stops runaway generations
     retrieval_top_k: int = 5
     max_attempts: int = 3
 

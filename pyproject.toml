@@ -28,6 +28,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=8"]
+langchain = ["langchain-core>=0.3", "langchain-ollama>=0.3"]
 
 [project.scripts]
 hrt = "hrt.cli:main"

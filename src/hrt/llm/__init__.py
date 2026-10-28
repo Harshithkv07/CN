@@ -7,6 +7,10 @@ def make_llm(settings: Settings) -> LLM:
         from hrt.llm.fake import FakeLLM
 
         return FakeLLM()
+    if settings.llm_provider == "langchain":
+        from hrt.llm.langchain import LangChainLLM
+
+        return LangChainLLM(settings)
     from hrt.llm.ollama import OllamaLLM
 
     return OllamaLLM(settings)

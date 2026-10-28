@@ -1,6 +1,6 @@
 {
   "suite": "triage",
-  "generated_at": "2026-09-16 21:34:21",
+  "generated_at": "2026-10-28 09:55:37",
   "result": {
     "dataset": "CICIDS2018 (stratified sample)",
     "rows": 34105,
@@ -11,31 +11,84 @@
       "FTP-BruteForce",
       "SSH-Bruteforce"
     ],
+    "iforest_sweep_validation": {
+      "256": {
+        "val_f1": 0.7026,
+        "val_recall": 0.5616
+      },
+      "512": {
+        "val_f1": 0.9355,
+        "val_recall": 0.9085
+      },
+      "1024": {
+        "val_f1": 0.953,
+        "val_recall": 0.9399
+      },
+      "2048": {
+        "val_f1": 0.9825,
+        "val_recall": 0.9994
+      }
+    },
+    "iforest_max_samples": 2048,
     "detectors": {
       "HRT_iforest": {
+        "precision": 0.9635,
+        "recall": 0.9993,
+        "f1": 0.9811,
+        "false_positive_rate": 0.0482,
+        "accuracy": 0.9784,
+        "n": 10232,
+        "n_malicious": 5732,
+        "roc_auc": 0.9822,
+        "pr_auc": 0.9612
+      },
+      "HRT_iforest_v1": {
         "precision": 0.9333,
         "recall": 0.53,
         "f1": 0.6761,
+        "false_positive_rate": 0.0482,
         "accuracy": 0.7155,
         "n": 10232,
         "n_malicious": 5732,
         "roc_auc": 0.9629,
         "pr_auc": 0.9457
       },
+      "HRT_hybrid": {
+        "precision": 0.9299,
+        "recall": 0.9997,
+        "f1": 0.9635,
+        "false_positive_rate": 0.096,
+        "accuracy": 0.9576,
+        "n": 10232,
+        "n_malicious": 5732
+      },
       "SIEM_rules": {
         "precision": 0.9588,
         "recall": 0.9977,
         "f1": 0.9779,
+        "false_positive_rate": 0.0547,
         "accuracy": 0.9747,
         "n": 10232,
         "n_malicious": 5732,
         "roc_auc": 0.9715,
         "pr_auc": 0.9579
       },
+      "KNN_reference": {
+        "precision": 0.9572,
+        "recall": 1.0,
+        "f1": 0.9782,
+        "false_positive_rate": 0.0569,
+        "accuracy": 0.975,
+        "n": 10232,
+        "n_malicious": 5732,
+        "roc_auc": 0.9942,
+        "pr_auc": 0.9919
+      },
       "RandomForest_supervised": {
         "precision": 1.0,
         "recall": 0.9998,
         "f1": 0.9999,
+        "false_positive_rate": 0.0,
         "accuracy": 0.9999,
         "n": 10232,
         "n_malicious": 5732,
@@ -46,26 +99,35 @@
     "hrt_per_class": {
       "Benign": {
         "n": 4500,
-        "false_positive_rate": 0.0482
+        "false_positive_rate": 0.0482,
+        "hybrid_false_positive_rate": 0.096,
+        "v1_false_positive_rate": 0.0482
       },
       "DDOS attack-HOIC": {
         "n": 1489,
-        "recall": 0.0
+        "recall": 0.9993,
+        "hybrid_recall": 0.9993,
+        "v1_recall": 0.0
       },
       "DoS attacks-Hulk": {
         "n": 1525,
-        "recall": 0.2118
+        "recall": 0.9987,
+        "hybrid_recall": 1.0,
+        "v1_recall": 0.2118
       },
       "FTP-BruteForce": {
         "n": 1213,
-        "recall": 1.0
+        "recall": 1.0,
+        "hybrid_recall": 1.0,
+        "v1_recall": 1.0
       },
       "SSH-Bruteforce": {
         "n": 1505,
-        "recall": 0.998
+        "recall": 0.9993,
+        "hybrid_recall": 0.9993,
+        "v1_recall": 0.998
       }
     },
-    "_elapsed_s": 3.7,
-    "_note": "data_reduction removed: it was a modeled estimate (300 B/flow, 40 flows per 900 B alert), not a measurement. Measured reduction lives in results/telemetry.json."
+    "_elapsed_s": 6.8
   }
 }

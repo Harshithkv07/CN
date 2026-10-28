@@ -9,7 +9,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from hrt.config import Settings
-from hrt.guardrail.pipeline import Guardrail, regex_validate
+from hrt.guardrail.pipeline import Guardrail
 from hrt.guardrail.sandbox import KernelSandbox
 
 
@@ -20,6 +20,9 @@ class Case:
     should_pass: bool
     source: str                 # the alert's true source IP
     category: str
+    deployed: tuple[str, ...] = ()   # rules already on the firewall (restore syntax), for conflict cases
+    kind: str = "iptables"           # "iptables" | "snort"
+    core: bool = False               # part of the original 28-case suite
 
 
 ATTACKER = "203.0.113.9"
@@ -63,43 +66,69 @@ CASES: list[Case] = [
 ]
 
 
+for _c in CASES:
+    _c.core = True
+
+
+def all_cases() -> list[Case]:
+    from hrt.eval.guardrail_extended import EXTENDED
+
+    return [*CASES, *EXTENDED]
+
+
 def run(settings: Settings, fast: bool = False) -> dict:
+    from hrt.eval.guardrail_extended import regex_accepts
+
     sandbox = KernelSandbox(settings)
     sandbox_ok = sandbox.available()
-    guardrail = Guardrail(settings, sandbox if sandbox_ok else None, lambda: [])
+    cases = all_cases()
 
-    rows, hrt_correct, regex_correct = [], 0, 0
-    regex_false_accepts, hrt_stage = [], {}
+    rows: list[dict] = []
     per_cat: dict[str, dict] = {}
-    for c in CASES:
-        verdict = guardrail.check(c.rule, c.source)
-        hrt_pass = verdict.passed
-        regex_pass = regex_validate(c.rule)
-        # kernel-only invalid-syntax cases can't be judged correct without a sandbox
-        skip_hrt = (not sandbox_ok) and c.category in ("invalid_syntax",) and c.should_pass is False and (
-            verdict.failure and verdict.failure.stage == "kernel")
-        hrt_ok = (hrt_pass == c.should_pass)
-        if not skip_hrt:
-            hrt_correct += hrt_ok
-        regic_ok = (regex_pass == c.should_pass)
-        regex_correct += regic_ok
+    regex_false_accepts, hrt_false_accepts, hrt_false_rejects = [], [], []
+    for c in cases:
+        guardrail = Guardrail(settings, sandbox if sandbox_ok else None, lambda d=c.deployed: list(d))
+        if c.kind == "snort":
+            verdict_pass = guardrail.check_snort(c.rule, c.source)
+            hrt_pass, stage = verdict_pass.passed, ("passed" if verdict_pass.passed else "snort")
+        else:
+            verdict = guardrail.check(c.rule, c.source)
+            hrt_pass = verdict.passed
+            stage = verdict.failure.stage if verdict.failure else "passed"
+        regex_pass = regex_accepts(c)
+        hrt_ok, regex_ok = hrt_pass == c.should_pass, regex_pass == c.should_pass
         if regex_pass and not c.should_pass:
             regex_false_accepts.append(c.name)
-        stage = verdict.failure.stage if verdict.failure else "passed"
-        hrt_stage[c.name] = stage
+        if hrt_pass and not c.should_pass:
+            hrt_false_accepts.append(c.name)
+        if not hrt_pass and c.should_pass:
+            hrt_false_rejects.append(c.name)
         cat = per_cat.setdefault(c.category, {"n": 0, "hrt_correct": 0, "regex_correct": 0})
         cat["n"] += 1
         cat["hrt_correct"] += hrt_ok
-        cat["regex_correct"] += regic_ok
-        rows.append({"name": c.name, "category": c.category, "should_pass": c.should_pass,
-                     "hrt_pass": hrt_pass, "hrt_stage": stage, "regex_pass": regex_pass})
+        cat["regex_correct"] += regex_ok
+        rows.append({"name": c.name, "category": c.category, "kind": c.kind, "core": c.core,
+                     "should_pass": c.should_pass, "hrt_pass": hrt_pass, "hrt_stage": stage,
+                     "regex_pass": regex_pass, "hrt_ok": hrt_ok, "regex_ok": regex_ok})
 
-    n = len(CASES)
+    def acc(sel, key):
+        sub = [r for r in rows if sel(r)]
+        return round(sum(r[key] for r in sub) / len(sub), 4) if sub else None
+
+    n = len(rows)
     return {
         "sandbox_available": sandbox_ok,
         "n_cases": n,
-        "hrt_accuracy": round(hrt_correct / n, 4),
-        "regex_accuracy": round(regex_correct / n, 4),
+        "hrt_accuracy": acc(lambda r: True, "hrt_ok"),
+        "regex_accuracy": acc(lambda r: True, "regex_ok"),
+        "core": {"n": sum(r["core"] for r in rows), "hrt_accuracy": acc(lambda r: r["core"], "hrt_ok"),
+                 "regex_accuracy": acc(lambda r: r["core"], "regex_ok")},
+        "extended": {"n": sum(not r["core"] for r in rows), "hrt_accuracy": acc(lambda r: not r["core"], "hrt_ok"),
+                     "regex_accuracy": acc(lambda r: not r["core"], "regex_ok")},
+        "snort": {"n": sum(r["kind"] == "snort" for r in rows), "hrt_accuracy": acc(lambda r: r["kind"] == "snort", "hrt_ok"),
+                  "regex_accuracy": acc(lambda r: r["kind"] == "snort", "regex_ok")},
+        "hrt_false_accepts": hrt_false_accepts,
+        "hrt_false_rejects": hrt_false_rejects,
         "regex_false_accepts": regex_false_accepts,
         "regex_false_accept_count": len(regex_false_accepts),
         "by_category": per_cat,

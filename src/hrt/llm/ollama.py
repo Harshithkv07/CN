@@ -54,7 +54,8 @@ class OllamaLLM:
         self.settings = settings
         self.model = model or settings.ollama_model
         self.name = f"ollama:{self.model}"
-        self.options = {"temperature": temperature, "seed": seed, "num_ctx": settings.llm_num_ctx}
+        self.options = {"temperature": temperature, "seed": seed, "num_ctx": settings.llm_num_ctx,
+                        "num_predict": settings.llm_num_predict}
         ensure_server(settings)
         self.client = httpx.Client(base_url=settings.ollama_url, timeout=settings.llm_timeout_seconds)
 

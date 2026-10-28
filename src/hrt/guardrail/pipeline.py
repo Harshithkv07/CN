@@ -11,6 +11,7 @@ from hrt.config import Settings
 from hrt.guardrail.conflicts import check_conflicts, parse_ruleset
 from hrt.guardrail.policy import PolicyError, parse
 from hrt.guardrail.sandbox import KernelSandbox, build_restore
+from hrt.guardrail.snort import check_snort
 from hrt.guardrail.subnet import check_subnets
 from hrt.models import GuardrailCheck, GuardrailVerdict
 
@@ -67,6 +68,9 @@ class Guardrail:
         deployed = [ln for ln in self.deployed_rules() if ln.startswith(("-A", "-I"))]
         checks.append(self.sandbox.verify(build_restore(self.baseline_text, [*deployed, parsed.restore_line])))
         return self._verdict(checks[-1].passed, checks, rule, argv, restore_line)
+
+    def check_snort(self, rule: str, alert_source: str | None) -> GuardrailCheck:
+        return check_snort(rule, alert_source, self.settings.protected_subnets, self.settings.min_source_prefix)
 
     @staticmethod
     def _verdict(passed: bool, checks: list[GuardrailCheck], rule: str, argv: list[str],

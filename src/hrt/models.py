@@ -101,6 +101,7 @@ class Mitigation(BaseModel):
     evidence: list[str] = Field(default_factory=list)
     recommended_actions: list[str] = Field(default_factory=list)
     iptables_rule: str
+    snort_rule: str = ""       # optional; if absent, a signature is rendered from the verified decision
 
 
 class GuardrailCheck(BaseModel):
@@ -174,6 +175,9 @@ class Incident(BaseModel):
     grounded: bool | None = None
     escalation_reason: str | None = None
     deploy_output: str | None = None
+    snort_rule: str | None = None          # drop signature for an inline IPS (static-checked, not loaded)
+    snort_source: str | None = None        # "llm" | "template"
+    snort_check: GuardrailCheck | None = None
 
     def mark(self, stage: str) -> None:
         self.times[stage] = time.time()

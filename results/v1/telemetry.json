@@ -1,0 +1,119 @@
+{
+  "suite": "telemetry",
+  "generated_at": "2026-09-27 11:49:13",
+  "result": {
+    "conn_log_bytes": 241902291,
+    "records": 634464,
+    "avg_record_bytes": 381.3,
+    "alerts": [
+      {
+        "rules": [
+          "PORT_SCAN"
+        ],
+        "source": "10.10.0.66",
+        "flows": 1024,
+        "raw_bytes": 390420,
+        "alert_bytes": 706,
+        "reduction": 0.99819
+      },
+      {
+        "rules": [
+          "PORT_SCAN"
+        ],
+        "source": "10.10.0.66",
+        "flows": 1024,
+        "raw_bytes": 390420,
+        "alert_bytes": 706,
+        "reduction": 0.99819
+      },
+      {
+        "rules": [
+          "PORT_SCAN"
+        ],
+        "source": "10.10.0.66",
+        "flows": 1024,
+        "raw_bytes": 390420,
+        "alert_bytes": 706,
+        "reduction": 0.99819
+      },
+      {
+        "rules": [
+          "PORT_SCAN"
+        ],
+        "source": "10.10.0.66",
+        "flows": 1024,
+        "raw_bytes": 390420,
+        "alert_bytes": 708,
+        "reduction": 0.99819
+      },
+      {
+        "rules": [
+          "SYN_FLOOD",
+          "CONN_FLOOD"
+        ],
+        "source": "10.10.0.66",
+        "flows": 77827,
+        "raw_bytes": 29673125,
+        "alert_bytes": 704,
+        "reduction": 0.99998
+      },
+      {
+        "rules": [
+          "SYN_FLOOD",
+          "CONN_FLOOD"
+        ],
+        "source": "10.10.0.66",
+        "flows": 98670,
+        "raw_bytes": 37619942,
+        "alert_bytes": 706,
+        "reduction": 0.99998
+      },
+      {
+        "rules": [
+          "SYN_FLOOD",
+          "CONN_FLOOD"
+        ],
+        "source": "10.10.0.66",
+        "flows": 19311,
+        "raw_bytes": 7362711,
+        "alert_bytes": 704,
+        "reduction": 0.9999
+      },
+      {
+        "rules": [
+          "BRUTE_FORCE"
+        ],
+        "source": "10.10.0.66",
+        "flows": 25,
+        "raw_bytes": 9531,
+        "alert_bytes": 689,
+        "reduction": 0.92772
+      },
+      {
+        "rules": [
+          "BRUTE_FORCE"
+        ],
+        "source": "10.10.0.66",
+        "flows": 25,
+        "raw_bytes": 9531,
+        "alert_bytes": 687,
+        "reduction": 0.92793
+      },
+      {
+        "rules": [
+          "BRUTE_FORCE"
+        ],
+        "source": "10.10.0.66",
+        "flows": 25,
+        "raw_bytes": 9531,
+        "alert_bytes": 690,
+        "reduction": 0.92761
+      }
+    ],
+    "n_alerts": 10,
+    "median_alert_reduction": 0.99819,
+    "min_alert_reduction": 0.92761,
+    "whole_log_reduction": 0.999971,
+    "_elapsed_s": 15.4
+  }
+}

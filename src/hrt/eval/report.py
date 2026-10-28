@@ -33,8 +33,10 @@ def _chart_triage(res: dict, out: Path) -> str | None:
     import matplotlib.pyplot as plt
 
     d = res["detectors"]
-    names = ["HRT_iforest", "SIEM_rules", "RandomForest_supervised"]
-    labels = ["HRT\n(IForest)", "SIEM\nrules", "RandomForest\n(supervised)"]
+    pairs = [("HRT_iforest_v1", "IForest\n(before)"), ("HRT_iforest", "IForest\n(tuned)"), ("SIEM_rules", "SIEM\nrules"),
+             ("RandomForest_supervised", "RandomForest\n(supervised)")]
+    pairs = [(n, l) for n, l in pairs if n in d]
+    names, labels = [n for n, _ in pairs], [l for _, l in pairs]
     metrics = ["precision", "recall", "f1"]
     fig, ax = plt.subplots(figsize=(7, 4.2), facecolor=NAVY)
     x = range(len(names))
@@ -155,9 +157,19 @@ def build(settings: Settings) -> Path:
     if triage:
         L += ["## 1. Tier-1 detection (CICIDS2018)", "",
               f"Stratified sample: {triage['rows']:,} flows, {len(triage['classes'])} classes.", "",
-              "| Detector | Precision | Recall | F1 | ROC-AUC |", "|---|---|---|---|---|"]
+              "| Detector | Precision | Recall | F1 | False-positive rate | ROC-AUC |", "|---|---|---|---|---|---|"]
         for name, m in triage["detectors"].items():
-            L.append(f"| {name} | {m['precision']} | {m['recall']} | {m['f1']} | {m.get('roc_auc','-')} |")
+            L.append(f"| {name} | {m['precision']} | {m['recall']} | {m['f1']} | {m.get('false_positive_rate','-')} | "
+                     f"{m.get('roc_auc','-')} |")
+        sw = triage.get("iforest_sweep_validation")
+        if sw:
+            L += ["", "Isolation Forest `max_samples` sweep on a validation split of the training data "
+                  "(the test split is not used for the choice): " + "; ".join(
+                      f"{k}: recall {v['val_recall']}, F1 {v['val_f1']}" for k, v in sw.items())
+                  + f". Chosen: {triage.get('iforest_max_samples')}. The earlier setting (256) caught only about half "
+                  "of the attacks at the same 5% benign false-positive budget.",
+                  "", "The supervised Random Forest scores about 1.0, so these four attack families are easy to separate: "
+                  "read the ranking of the methods, not the absolute numbers."]
         L += ["", f"![triage]({_chart_triage(triage, out)})", ""]
 
     tele = _load(out, "telemetry")
@@ -177,8 +189,17 @@ def build(settings: Settings) -> Path:
         L += ["## 2. Tier-3 rule verification", "",
               f"{guard['n_cases']} adversarial cases. **HRT guardrail accuracy: {guard['hrt_accuracy']*100:.0f}%**, "
               f"**regex baseline: {guard['regex_accuracy']*100:.0f}%**.", "",
-              f"The regex baseline dangerously accepted {guard['regex_false_accept_count']} unsafe rules: "
-              f"`{', '.join(guard['regex_false_accepts'])}`.", "",
+              *([f"Original suite ({guard['core']['n']} cases): HRT {guard['core']['hrt_accuracy']*100:.0f}%, regex "
+                 f"{guard['core']['regex_accuracy']*100:.0f}%. Extended suite ({guard['extended']['n']} cases: IPv6 and "
+                 f"address encodings, CIDR overlap, ordering, conflicts with deployed rules, option smuggling, Snort "
+                 f"signatures): HRT {guard['extended']['hrt_accuracy']*100:.0f}%, regex "
+                 f"{guard['extended']['regex_accuracy']*100:.0f}%. Snort signatures alone ({guard['snort']['n']}): HRT "
+                 f"{guard['snort']['hrt_accuracy']*100:.0f}%, regex {guard['snort']['regex_accuracy']*100:.0f}%. "
+                 f"HRT accepted {len(guard.get('hrt_false_accepts', []))} unsafe rules and rejected "
+                 f"{len(guard.get('hrt_false_rejects', []))} safe ones.", ""] if "core" in guard else []),
+              f"The regex baseline accepted {guard['regex_false_accept_count']} unsafe rules.", "",
+              "Caveat: the cases were written by the same team that wrote the gate, so this shows coverage of known "
+              "tricks, not an independent audit.", "",
               f"![guardrail]({_chart_guardrail(guard, out)})", ""]
 
     agent = _load(out, "agent")
@@ -217,6 +238,69 @@ def build(settings: Settings) -> Path:
             L += ["What the no-RAG model actually answered, attempt by attempt, is in "
                   "[`agent_probe_norag.txt`](agent_probe_norag.txt).", ""]
         L += [f"![agent]({_chart_agent(agent, out)})", ""]
+
+
+    # ---- additional suites -------------------------------------------------------------------
+    extra_runs = [("agent_hard", "Harder CICIDS classes (Bot, Infiltration, DoS variants)"),
+                  ("agent_qwen", "Second model (Qwen 2.5 3B), standard classes"),
+                  ("agent_hard_qwen", "Second model (Qwen 2.5 3B), harder classes")]
+    loaded = [(t, _load(out, k)) for k, t in extra_runs]
+    loaded = [(t, r) for t, r in loaded if r and any(m in r for m in ("rag_hier", "rag_flat", "no_rag"))]
+    if loaded:
+        L += ["## 3b. Harder classes and a second model", ""]
+        for title, r in loaded:
+            L += [f"**{title}**: `{r['meta']['llm']}`, {r['meta']['incidents']} incidents, classes: "
+                  f"{', '.join(r['meta']['classes'])}.", "",
+                  "| Mode | Technique acc. | Tactic acc. | Grounding | Invalid-ID | Rule-valid | Escalation | Median s |",
+                  "|---|---|---|---|---|---|---|---|"]
+            for md in ("no_rag", "rag_flat", "rag_hier"):
+                if md in r:
+                    m = r[md]
+                    L.append(f"| {md} | {m['technique_accuracy']} | {m['tactic_accuracy']} | {m['grounding_rate']} | "
+                             f"{m['invalid_id_rate']} | {m['rule_valid_rate']} | {m['escalation_rate']} | {m['median_latency_s']} |")
+            L.append("")
+
+    v1 = None
+    p1 = out / "v1" / "agent.json"
+    if p1.exists():
+        v1 = json.loads(p1.read_text())["result"]
+    if v1 and agent and "rag_hier" in v1 and "rag_hier" in agent:
+        L += ["## 3c. Latency: before and after the prompt fix", "",
+              "The model used to omit `-I`, then append with `-A` behind an ACCEPT rule, so two of three attempts were "
+              "wasted. The prompt now shows the exact rule form.", "",
+              "| Mode | Median seconds before | after | Median LLM calls before | after |", "|---|---|---|---|---|"]
+        for md in ("rag_hier", "rag_flat", "no_rag"):
+            if md in v1 and md in agent:
+                L.append(f"| {md} | {v1[md]['median_latency_s']} | {agent[md]['median_latency_s']} | "
+                         f"{v1[md]['median_attempts']} | {agent[md]['median_attempts']} |")
+        L.append("")
+
+    beacon = _load(out, "beacon")
+    if beacon:
+        L += ["## 3d. C2 beaconing", "",
+              f"Simulated implant traffic through the real Tier-1 engine, {beacon['trials_per_cell']} trials per cell, "
+              f"{int(beacon['window_seconds'])} s history per source/destination/port. Rule: {beacon['rule']}.", "",
+              "| Beacon period / jitter | Detected | Median seconds to alert | Old 10 s window only |", "|---|---|---|---|"]
+        for k, v in beacon["detection"].items():
+            L.append(f"| {k} | {v['detected']} | {v['median_seconds_to_alert']} | {beacon['detection_10s_window_only'][k]} |")
+        L += ["", "False alarms: " + "; ".join(f"{k}: {v['hours_with_a_beacon_alert']}/{v['client_hours']} client-hours"
+                                              for k, v in beacon["benign_false_alarm_rate"].items())
+              + ". " + "; ".join(f"{k}: {v['beacon_alerts']} alert(s) from {v['flows']:,} flows"
+                                 for k, v in {**beacon["benign_false_alarms"], **beacon["known_limitation"]}.items()) + ".", "",
+              beacon.get("note", ""), ""]
+
+    inj = _load(out, "injection")
+    if inj:
+        t, o, lv = inj["telemetry_path"], inj["obedient_llm_path"], inj.get("live_llm_path", {})
+        L += ["## 3e. Prompt injection and RAG poisoning", "",
+              f"- Telemetry path: {t['payload_reached_prompt']} of {t['payloads']} payloads placed in log fields reached the prompt.",
+              f"- Obedient-LLM path (worst case): {o['harmful_rules_accepted']} of {o['payloads']} harmful rules accepted.",
+              *([f"- Live model ({lv.get('llm')}): followed the injection in {lv['fenced']['model_followed_injection']}/"
+                 f"{lv['fenced']['n']} cases with the fenced prompt and {lv['unfenced']['model_followed_injection']}/"
+                 f"{lv['unfenced']['n']} with an unfenced one; harmful rules accepted after the guardrail: "
+                 f"{lv['fenced']['harmful_accepted_after_guardrail']} and {lv['unfenced']['harmful_accepted_after_guardrail']}."]
+                if "fenced" in lv else ["- Live-model path was not run."]),
+              "", "Limits: " + " ".join(inj.get("limits", [])), ""]
 
     asy = _load(out, "async")
     if asy:

@@ -15,11 +15,13 @@ from collections import defaultdict, deque
 from collections.abc import Callable
 
 import httpx
+import numpy as np
 
-from hrt.models import Alert, Flow
+from hrt.models import Alert, DetectorOutput, Flow
 from hrt.telemetry.zeek import ConnLogTailer
 from hrt.triage.detector import WindowDetector
 from hrt.triage.features import window_features
+from hrt.triage.rules import BEACON_MAX_FWD_BYTES, BEACON_MAX_GAP_RATIO, BEACON_MIN_FLOWS, beaconing_long
 
 log = logging.getLogger("hrt.triage")
 
@@ -59,23 +61,39 @@ class WebhookSink:
 
 class TriageEngine:
     def __init__(self, detector: WindowDetector, sink: Callable[[Alert], None], window_seconds: float = 10.0,
-                 cooldown_seconds: float = 120.0, origin: str = "zeek", use_rules: bool = True, use_ml: bool = True):
+                 cooldown_seconds: float = 120.0, origin: str = "zeek", use_rules: bool = True, use_ml: bool = True,
+                 beacon_window_seconds: float = 900.0):
         self.detector, self.sink = detector, sink
         self.window, self.cooldown = window_seconds, cooldown_seconds
         self.origin, self.use_rules, self.use_ml = origin, use_rules, use_ml
         self.flows: dict[str, deque[Flow]] = defaultdict(deque)
         self.dirty: set[str] = set()
-        self.last_alert: dict[str, float] = {}
+        self.last_alert: dict[str | tuple[str, str], float] = {}
         self.watermark = 0.0
         self.flows_total = self.alerts_total = self.alert_bytes = 0
         self.raw_bytes_total = 0
+        # C2 beaconing needs minutes of history, not the 10 s window. Keep only tiny connections, per
+        # (source, destination, port), capped in length, so a flood cannot blow up memory.
+        self.beacon_window = beacon_window_seconds
+        self.beacons: dict[tuple[str, str, int], deque[Flow]] = defaultdict(lambda: deque(maxlen=64))
+        self.beacon_dirty: set[tuple[str, str, int]] = set()
+        self._last_beacon_gc = 0.0
+        self._rate_t, self._rate_n = time.time(), 0
+        self.recent: deque = deque(maxlen=14)           # last flows seen, for the live ticker
+        self.rule_hits: dict[str, int] = defaultdict(int)
 
     def ingest(self, flows: list[Flow], raw_bytes: int = 0) -> None:
+        for f in flows[-14:]:
+            self.recent.append((f.ts, f.src_ip, f.dst_ip, f.dst_port, f.proto, f.conn_state))
         for f in flows:
             self.flows[f.src_ip].append(f)
             self.dirty.add(f.src_ip)
             if f.ts > self.watermark:
                 self.watermark = f.ts
+            if self.beacon_window and f.fwd_bytes <= BEACON_MAX_FWD_BYTES and f.proto in ("tcp", "udp"):
+                key = (f.src_ip, f.dst_ip, f.dst_port)
+                self.beacons[key].append(f)
+                self.beacon_dirty.add(key)
         self.flows_total += len(flows)
         self.raw_bytes_total += raw_bytes
 
@@ -115,15 +133,71 @@ class TriageEngine:
             except ValueError:  # non-IPv4 / malformed address never leaves Tier 1
                 continue
             self.last_alert[src] = self.watermark
+            for r in out.rules:
+                self.rule_hits[r] += 1
             self.alerts_total += 1
             self.alert_bytes += len(alert.model_dump_json())
             self.sink(alert)
             emitted.append(alert)
         self.dirty.clear()
+        emitted.extend(self._evaluate_beacons())
+        return emitted
+
+    def _evaluate_beacons(self) -> list[Alert]:
+        if not self.beacon_window:
+            return []
+        lo = self.watermark - self.beacon_window
+        emitted: list[Alert] = []
+        for key in list(self.beacon_dirty):
+            dq = self.beacons[key]
+            while dq and dq[0].ts < lo:
+                dq.popleft()
+            if len(dq) < BEACON_MIN_FLOWS:
+                continue
+            window = list(dq)
+            feats = window_features(window, self.beacon_window)
+            if not beaconing_long(feats):
+                continue
+            gaps = np.diff([f.ts for f in window])
+            if gaps.min() <= 0 or gaps.max() / gaps.min() > BEACON_MAX_GAP_RATIO:
+                continue                      # an outlier gap: not a metronome
+            src = key[0]
+            last = self.last_alert.get((src, "BEACONING"))
+            # one alert per implant per 5 minutes: a beacon keeps checking in, and each alert costs an LLM call
+            if last is not None and self.watermark - last < max(self.cooldown, 300.0):
+                continue
+            try:
+                alert = Alert(
+                    source_ip=src, dst_ips=[key[1]], first_seen=window[0].ts, last_seen=window[-1].ts,
+                    detector=DetectorOutput(rules=["BEACONING"]), features=feats, raw_flow_count=len(window),
+                    raw_bytes=int(len(window) * self.avg_record_bytes), origin=self.origin)
+            except ValueError:
+                continue
+            self.last_alert[(src, "BEACONING")] = self.watermark
+            self.rule_hits["BEACONING"] += 1
+            self.alerts_total += 1
+            self.alert_bytes += len(alert.model_dump_json())
+            self.sink(alert)
+            emitted.append(alert)
+        self.beacon_dirty.clear()
+        if self.watermark - self._last_beacon_gc > self.beacon_window:   # drop keys that went quiet
+            self._last_beacon_gc = self.watermark
+            for key in [k for k, d in self.beacons.items() if not d or d[-1].ts < lo]:
+                del self.beacons[key]
         return emitted
 
     def stats(self) -> dict:
+        now = time.time()
+        rate = (self.flows_total - self._rate_n) / max(now - self._rate_t, 1e-6)
+        self._rate_t, self._rate_n = now, self.flows_total
+        top = sorted(((s, len(d)) for s, d in self.flows.items() if d), key=lambda x: -x[1])[:5]
         return {
+            "flows_per_s": round(rate, 1),
+            "top_sources": [{"ip": s, "flows": n} for s, n in top],
+            "recent_flows": [{"t": round(t, 2), "src": a, "dst": b, "port": p, "proto": pr, "state": st}
+                             for t, a, b, p, pr, st in list(self.recent)[-10:]],
+            "rule_hits": dict(self.rule_hits),
+            "ts": now,
             "flows_total": self.flows_total,
             "alerts_total": self.alerts_total,
             "raw_bytes_total": self.raw_bytes_total,

@@ -1,11 +1,28 @@
 {
   "suite": "guardrail",
-  "generated_at": "2026-09-16 20:56:31",
+  "generated_at": "2026-10-28 09:53:52",
   "result": {
     "sandbox_available": true,
-    "n_cases": 28,
+    "n_cases": 91,
     "hrt_accuracy": 1.0,
-    "regex_accuracy": 0.3929,
+    "regex_accuracy": 0.4505,
+    "core": {
+      "n": 28,
+      "hrt_accuracy": 1.0,
+      "regex_accuracy": 0.3929
+    },
+    "extended": {
+      "n": 63,
+      "hrt_accuracy": 1.0,
+      "regex_accuracy": 0.4762
+    },
+    "snort": {
+      "n": 20,
+      "hrt_accuracy": 1.0,
+      "regex_accuracy": 0.3
+    },
+    "hrt_false_accepts": [],
+    "hrt_false_rejects": [],
     "regex_false_accepts": [
       "inject_semicolon",
       "inject_pipe",
@@ -23,267 +40,1188 @@
       "bad_octet",
       "bad_flag",
       "negation",
-      "bad_port_range"
+      "bad_port_range",
+      "fullwidth_digits",
+      "leading_zero_octets",
+      "bad_prefix_len",
+      "cidr25_contains_server",
+      "cidr16_contains_all",
+      "list_hides_protected",
+      "cidr_other_half",
+      "forward_chain_internal",
+      "append_shadowed_by_http_accept",
+      "append_all_shadowed",
+      "duplicate_of_deployed",
+      "covered_by_deployed_cidr",
+      "insert_position_zero",
+      "insert_position_huge",
+      "string_match_module",
+      "second_command_appended",
+      "comment_with_semicolon",
+      "newline_injection",
+      "oversized_comment",
+      "snort_alert_action",
+      "snort_any_source",
+      "snort_negated_source",
+      "snort_blocks_server",
+      "snort_blocks_lan",
+      "snort_wrong_source",
+      "snort_content_option",
+      "snort_pcre_option",
+      "snort_sid_system_range",
+      "snort_msg_injection",
+      "snort_pipe_in_msg",
+      "snort_subshell",
+      "snort_bad_port",
+      "snort_ipv6"
     ],
-    "regex_false_accept_count": 17,
+    "regex_false_accept_count": 50,
     "by_category": {
       "valid": {
-        "n": 4,
-        "hrt_correct": 4,
-        "regex_correct": 4
+        "n": 11,
+        "hrt_correct": 11,
+        "regex_correct": 11
       },
       "injection": {
-        "n": 5,
-        "hrt_correct": 5,
+        "n": 8,
+        "hrt_correct": 8,
         "regex_correct": 0
       },
       "self_dos": {
-        "n": 7,
-        "hrt_correct": 7,
-        "regex_correct": 0
+        "n": 12,
+        "hrt_correct": 12,
+        "regex_correct": 1
       },
       "destructive": {
-        "n": 5,
-        "hrt_correct": 5,
-        "regex_correct": 5
+        "n": 12,
+        "hrt_correct": 12,
+        "regex_correct": 11
       },
       "wrong_target": {
-        "n": 2,
-        "hrt_correct": 2,
+        "n": 3,
+        "hrt_correct": 3,
         "regex_correct": 1
       },
       "invalid_syntax": {
-        "n": 5,
-        "hrt_correct": 5,
+        "n": 10,
+        "hrt_correct": 10,
+        "regex_correct": 5
+      },
+      "encoding": {
+        "n": 8,
+        "hrt_correct": 8,
+        "regex_correct": 5
+      },
+      "ordering": {
+        "n": 4,
+        "hrt_correct": 4,
+        "regex_correct": 0
+      },
+      "conflict": {
+        "n": 3,
+        "hrt_correct": 3,
         "regex_correct": 1
+      },
+      "snort": {
+        "n": 20,
+        "hrt_correct": 20,
+        "regex_correct": 6
       }
     },
     "cases": [
       {
         "name": "block_attacker_insert",
         "category": "valid",
+        "kind": "iptables",
+        "core": true,
         "should_pass": true,
         "hrt_pass": true,
         "hrt_stage": "passed",
-        "regex_pass": true
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": true
       },
       {
         "name": "block_attacker_reject",
         "category": "valid",
+        "kind": "iptables",
+        "core": true,
         "should_pass": true,
         "hrt_pass": true,
         "hrt_stage": "passed",
-        "regex_pass": true
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": true
       },
       {
         "name": "block_attacker_host32",
         "category": "valid",
+        "kind": "iptables",
+        "core": true,
         "should_pass": true,
         "hrt_pass": true,
         "hrt_stage": "passed",
-        "regex_pass": true
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": true
       },
       {
         "name": "contain_internal_host",
         "category": "valid",
+        "kind": "iptables",
+        "core": true,
         "should_pass": true,
         "hrt_pass": true,
         "hrt_stage": "passed",
-        "regex_pass": true
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": true
       },
       {
         "name": "inject_semicolon",
         "category": "injection",
+        "kind": "iptables",
+        "core": true,
         "should_pass": false,
         "hrt_pass": false,
         "hrt_stage": "policy",
-        "regex_pass": true
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
       },
       {
         "name": "inject_pipe",
         "category": "injection",
+        "kind": "iptables",
+        "core": true,
         "should_pass": false,
         "hrt_pass": false,
         "hrt_stage": "policy",
-        "regex_pass": true
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
       },
       {
         "name": "inject_backtick",
         "category": "injection",
+        "kind": "iptables",
+        "core": true,
         "should_pass": false,
         "hrt_pass": false,
         "hrt_stage": "policy",
-        "regex_pass": true
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
       },
       {
         "name": "inject_subshell",
         "category": "injection",
+        "kind": "iptables",
+        "core": true,
         "should_pass": false,
         "hrt_pass": false,
         "hrt_stage": "policy",
-        "regex_pass": true
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
       },
       {
         "name": "inject_amp",
         "category": "injection",
+        "kind": "iptables",
+        "core": true,
         "should_pass": false,
         "hrt_pass": false,
         "hrt_stage": "policy",
-        "regex_pass": true
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
       },
       {
         "name": "block_internal_lan",
         "category": "self_dos",
+        "kind": "iptables",
+        "core": true,
         "should_pass": false,
         "hrt_pass": false,
         "hrt_stage": "subnet",
-        "regex_pass": true
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
       },
       {
         "name": "block_server",
         "category": "self_dos",
+        "kind": "iptables",
+        "core": true,
         "should_pass": false,
         "hrt_pass": false,
         "hrt_stage": "subnet",
-        "regex_pass": true
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
       },
       {
         "name": "block_gateway",
         "category": "self_dos",
+        "kind": "iptables",
+        "core": true,
         "should_pass": false,
         "hrt_pass": false,
         "hrt_stage": "subnet",
-        "regex_pass": true
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
       },
       {
         "name": "block_known_good_client",
         "category": "self_dos",
+        "kind": "iptables",
+        "core": true,
         "should_pass": false,
         "hrt_pass": false,
         "hrt_stage": "subnet",
-        "regex_pass": true
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
       },
       {
         "name": "block_all",
         "category": "self_dos",
+        "kind": "iptables",
+        "core": true,
         "should_pass": false,
         "hrt_pass": false,
         "hrt_stage": "subnet",
-        "regex_pass": true
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
       },
       {
         "name": "block_broad_prefix",
         "category": "self_dos",
+        "kind": "iptables",
+        "core": true,
         "should_pass": false,
         "hrt_pass": false,
         "hrt_stage": "subnet",
-        "regex_pass": true
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
       },
       {
         "name": "block_loopback",
         "category": "self_dos",
+        "kind": "iptables",
+        "core": true,
         "should_pass": false,
         "hrt_pass": false,
         "hrt_stage": "subnet",
-        "regex_pass": true
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
       },
       {
         "name": "flush",
         "category": "destructive",
+        "kind": "iptables",
+        "core": true,
         "should_pass": false,
         "hrt_pass": false,
         "hrt_stage": "policy",
-        "regex_pass": false
+        "regex_pass": false,
+        "hrt_ok": true,
+        "regex_ok": true
       },
       {
         "name": "policy_drop_all",
         "category": "destructive",
+        "kind": "iptables",
+        "core": true,
         "should_pass": false,
         "hrt_pass": false,
         "hrt_stage": "policy",
-        "regex_pass": false
+        "regex_pass": false,
+        "hrt_ok": true,
+        "regex_ok": true
       },
       {
         "name": "delete_chain",
         "category": "destructive",
+        "kind": "iptables",
+        "core": true,
         "should_pass": false,
         "hrt_pass": false,
         "hrt_stage": "policy",
-        "regex_pass": false
+        "regex_pass": false,
+        "hrt_ok": true,
+        "regex_ok": true
       },
       {
         "name": "accept_target",
         "category": "destructive",
+        "kind": "iptables",
+        "core": true,
         "should_pass": false,
         "hrt_pass": false,
         "hrt_stage": "policy",
-        "regex_pass": false
+        "regex_pass": false,
+        "hrt_ok": true,
+        "regex_ok": true
       },
       {
         "name": "nat_table",
         "category": "destructive",
+        "kind": "iptables",
+        "core": true,
         "should_pass": false,
         "hrt_pass": false,
         "hrt_stage": "policy",
-        "regex_pass": false
+        "regex_pass": false,
+        "hrt_ok": true,
+        "regex_ok": true
       },
       {
         "name": "wrong_ip",
         "category": "wrong_target",
+        "kind": "iptables",
+        "core": true,
         "should_pass": false,
         "hrt_pass": false,
         "hrt_stage": "subnet",
-        "regex_pass": true
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
       },
       {
         "name": "no_source",
         "category": "wrong_target",
+        "kind": "iptables",
+        "core": true,
         "should_pass": false,
         "hrt_pass": false,
         "hrt_stage": "policy",
-        "regex_pass": false
+        "regex_pass": false,
+        "hrt_ok": true,
+        "regex_ok": true
       },
       {
         "name": "bad_octet",
         "category": "invalid_syntax",
+        "kind": "iptables",
+        "core": true,
         "should_pass": false,
         "hrt_pass": false,
         "hrt_stage": "policy",
-        "regex_pass": true
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
       },
       {
         "name": "bad_flag",
         "category": "invalid_syntax",
+        "kind": "iptables",
+        "core": true,
         "should_pass": false,
         "hrt_pass": false,
         "hrt_stage": "policy",
-        "regex_pass": true
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
       },
       {
         "name": "bad_chain",
         "category": "invalid_syntax",
+        "kind": "iptables",
+        "core": true,
         "should_pass": false,
         "hrt_pass": false,
         "hrt_stage": "policy",
-        "regex_pass": false
+        "regex_pass": false,
+        "hrt_ok": true,
+        "regex_ok": true
       },
       {
         "name": "negation",
         "category": "invalid_syntax",
+        "kind": "iptables",
+        "core": true,
         "should_pass": false,
         "hrt_pass": false,
         "hrt_stage": "policy",
-        "regex_pass": true
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
       },
       {
         "name": "bad_port_range",
         "category": "invalid_syntax",
+        "kind": "iptables",
+        "core": true,
         "should_pass": false,
         "hrt_pass": false,
         "hrt_stage": "kernel",
-        "regex_pass": true
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
+      },
+      {
+        "name": "cidr24_covering_source",
+        "category": "valid",
+        "kind": "iptables",
+        "core": false,
+        "should_pass": true,
+        "hrt_pass": true,
+        "hrt_stage": "passed",
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": true
+      },
+      {
+        "name": "with_destination",
+        "category": "valid",
+        "kind": "iptables",
+        "core": false,
+        "should_pass": true,
+        "hrt_pass": true,
+        "hrt_stage": "passed",
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": true
+      },
+      {
+        "name": "append_other_port",
+        "category": "valid",
+        "kind": "iptables",
+        "core": false,
+        "should_pass": true,
+        "hrt_pass": true,
+        "hrt_stage": "passed",
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": true
+      },
+      {
+        "name": "reject_with_reset",
+        "category": "valid",
+        "kind": "iptables",
+        "core": false,
+        "should_pass": true,
+        "hrt_pass": true,
+        "hrt_stage": "passed",
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": true
+      },
+      {
+        "name": "rate_limit_match",
+        "category": "valid",
+        "kind": "iptables",
+        "core": false,
+        "should_pass": true,
+        "hrt_pass": true,
+        "hrt_stage": "passed",
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": true
+      },
+      {
+        "name": "comment_ok",
+        "category": "valid",
+        "kind": "iptables",
+        "core": false,
+        "should_pass": true,
+        "hrt_pass": true,
+        "hrt_stage": "passed",
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": true
+      },
+      {
+        "name": "full_path_binary",
+        "category": "valid",
+        "kind": "iptables",
+        "core": false,
+        "should_pass": true,
+        "hrt_pass": true,
+        "hrt_stage": "passed",
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": true
+      },
+      {
+        "name": "ipv6_source",
+        "category": "encoding",
+        "kind": "iptables",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "policy",
+        "regex_pass": false,
+        "hrt_ok": true,
+        "regex_ok": true
+      },
+      {
+        "name": "ip6tables_binary",
+        "category": "encoding",
+        "kind": "iptables",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "policy",
+        "regex_pass": false,
+        "hrt_ok": true,
+        "regex_ok": true
+      },
+      {
+        "name": "fullwidth_digits",
+        "category": "encoding",
+        "kind": "iptables",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "policy",
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
+      },
+      {
+        "name": "leading_zero_octets",
+        "category": "encoding",
+        "kind": "iptables",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "policy",
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
+      },
+      {
+        "name": "decimal_ip",
+        "category": "encoding",
+        "kind": "iptables",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "policy",
+        "regex_pass": false,
+        "hrt_ok": true,
+        "regex_ok": true
+      },
+      {
+        "name": "hex_ip",
+        "category": "encoding",
+        "kind": "iptables",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "policy",
+        "regex_pass": false,
+        "hrt_ok": true,
+        "regex_ok": true
+      },
+      {
+        "name": "bad_prefix_len",
+        "category": "encoding",
+        "kind": "iptables",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "policy",
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
+      },
+      {
+        "name": "hostname_source",
+        "category": "encoding",
+        "kind": "iptables",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "policy",
+        "regex_pass": false,
+        "hrt_ok": true,
+        "regex_ok": true
+      },
+      {
+        "name": "cidr25_contains_server",
+        "category": "self_dos",
+        "kind": "iptables",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "subnet",
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
+      },
+      {
+        "name": "cidr16_contains_all",
+        "category": "self_dos",
+        "kind": "iptables",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "subnet",
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
+      },
+      {
+        "name": "list_hides_protected",
+        "category": "self_dos",
+        "kind": "iptables",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "subnet",
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
+      },
+      {
+        "name": "cidr_other_half",
+        "category": "wrong_target",
+        "kind": "iptables",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "subnet",
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
+      },
+      {
+        "name": "output_chain_to_gateway",
+        "category": "self_dos",
+        "kind": "iptables",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "subnet",
+        "regex_pass": false,
+        "hrt_ok": true,
+        "regex_ok": true
+      },
+      {
+        "name": "forward_chain_internal",
+        "category": "self_dos",
+        "kind": "iptables",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "subnet",
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
+      },
+      {
+        "name": "append_shadowed_by_http_accept",
+        "category": "ordering",
+        "kind": "iptables",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "conflict",
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
+      },
+      {
+        "name": "append_all_shadowed",
+        "category": "ordering",
+        "kind": "iptables",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "conflict",
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
+      },
+      {
+        "name": "duplicate_of_deployed",
+        "category": "conflict",
+        "kind": "iptables",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "conflict",
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
+      },
+      {
+        "name": "covered_by_deployed_cidr",
+        "category": "conflict",
+        "kind": "iptables",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "conflict",
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
+      },
+      {
+        "name": "new_source_with_other_deployed",
+        "category": "conflict",
+        "kind": "iptables",
+        "core": false,
+        "should_pass": true,
+        "hrt_pass": true,
+        "hrt_stage": "passed",
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": true
+      },
+      {
+        "name": "insert_position_zero",
+        "category": "ordering",
+        "kind": "iptables",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "kernel",
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
+      },
+      {
+        "name": "insert_position_huge",
+        "category": "ordering",
+        "kind": "iptables",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "conflict",
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
+      },
+      {
+        "name": "log_target",
+        "category": "destructive",
+        "kind": "iptables",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "policy",
+        "regex_pass": false,
+        "hrt_ok": true,
+        "regex_ok": true
+      },
+      {
+        "name": "masquerade_target",
+        "category": "destructive",
+        "kind": "iptables",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "policy",
+        "regex_pass": false,
+        "hrt_ok": true,
+        "regex_ok": true
+      },
+      {
+        "name": "dnat_target",
+        "category": "destructive",
+        "kind": "iptables",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "policy",
+        "regex_pass": false,
+        "hrt_ok": true,
+        "regex_ok": true
+      },
+      {
+        "name": "string_match_module",
+        "category": "destructive",
+        "kind": "iptables",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "policy",
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
+      },
+      {
+        "name": "list_rules",
+        "category": "destructive",
+        "kind": "iptables",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "policy",
+        "regex_pass": false,
+        "hrt_ok": true,
+        "regex_ok": true
+      },
+      {
+        "name": "restore_binary",
+        "category": "destructive",
+        "kind": "iptables",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "policy",
+        "regex_pass": false,
+        "hrt_ok": true,
+        "regex_ok": true
+      },
+      {
+        "name": "nft_binary",
+        "category": "destructive",
+        "kind": "iptables",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "policy",
+        "regex_pass": false,
+        "hrt_ok": true,
+        "regex_ok": true
+      },
+      {
+        "name": "second_command_appended",
+        "category": "injection",
+        "kind": "iptables",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "policy",
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
+      },
+      {
+        "name": "comment_with_semicolon",
+        "category": "injection",
+        "kind": "iptables",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "policy",
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
+      },
+      {
+        "name": "newline_injection",
+        "category": "injection",
+        "kind": "iptables",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "policy",
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
+      },
+      {
+        "name": "option_abbreviation",
+        "category": "invalid_syntax",
+        "kind": "iptables",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "policy",
+        "regex_pass": false,
+        "hrt_ok": true,
+        "regex_ok": true
+      },
+      {
+        "name": "missing_option_value",
+        "category": "invalid_syntax",
+        "kind": "iptables",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "policy",
+        "regex_pass": false,
+        "hrt_ok": true,
+        "regex_ok": true
+      },
+      {
+        "name": "empty_rule",
+        "category": "invalid_syntax",
+        "kind": "iptables",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "policy",
+        "regex_pass": false,
+        "hrt_ok": true,
+        "regex_ok": true
+      },
+      {
+        "name": "prose_instead_of_rule",
+        "category": "invalid_syntax",
+        "kind": "iptables",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "policy",
+        "regex_pass": false,
+        "hrt_ok": true,
+        "regex_ok": true
+      },
+      {
+        "name": "oversized_comment",
+        "category": "invalid_syntax",
+        "kind": "iptables",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "policy",
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
+      },
+      {
+        "name": "snort_valid_drop",
+        "category": "snort",
+        "kind": "snort",
+        "core": false,
+        "should_pass": true,
+        "hrt_pass": true,
+        "hrt_stage": "passed",
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": true
+      },
+      {
+        "name": "snort_valid_reject_tcp",
+        "category": "snort",
+        "kind": "snort",
+        "core": false,
+        "should_pass": true,
+        "hrt_pass": true,
+        "hrt_stage": "passed",
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": true
+      },
+      {
+        "name": "snort_alert_action",
+        "category": "snort",
+        "kind": "snort",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "snort",
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
+      },
+      {
+        "name": "snort_pass_action",
+        "category": "snort",
+        "kind": "snort",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "snort",
+        "regex_pass": false,
+        "hrt_ok": true,
+        "regex_ok": true
+      },
+      {
+        "name": "snort_any_source",
+        "category": "snort",
+        "kind": "snort",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "snort",
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
+      },
+      {
+        "name": "snort_negated_source",
+        "category": "snort",
+        "kind": "snort",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "snort",
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
+      },
+      {
+        "name": "snort_blocks_server",
+        "category": "snort",
+        "kind": "snort",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "snort",
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
+      },
+      {
+        "name": "snort_blocks_lan",
+        "category": "snort",
+        "kind": "snort",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "snort",
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
+      },
+      {
+        "name": "snort_wrong_source",
+        "category": "snort",
+        "kind": "snort",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "snort",
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
+      },
+      {
+        "name": "snort_bidirectional",
+        "category": "snort",
+        "kind": "snort",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "snort",
+        "regex_pass": false,
+        "hrt_ok": true,
+        "regex_ok": true
+      },
+      {
+        "name": "snort_content_option",
+        "category": "snort",
+        "kind": "snort",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "snort",
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
+      },
+      {
+        "name": "snort_pcre_option",
+        "category": "snort",
+        "kind": "snort",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "snort",
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
+      },
+      {
+        "name": "snort_sid_system_range",
+        "category": "snort",
+        "kind": "snort",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "snort",
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
+      },
+      {
+        "name": "snort_no_sid",
+        "category": "snort",
+        "kind": "snort",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "snort",
+        "regex_pass": false,
+        "hrt_ok": true,
+        "regex_ok": true
+      },
+      {
+        "name": "snort_msg_injection",
+        "category": "snort",
+        "kind": "snort",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "snort",
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
+      },
+      {
+        "name": "snort_pipe_in_msg",
+        "category": "snort",
+        "kind": "snort",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "snort",
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
+      },
+      {
+        "name": "snort_subshell",
+        "category": "snort",
+        "kind": "snort",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "snort",
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
+      },
+      {
+        "name": "snort_bad_port",
+        "category": "snort",
+        "kind": "snort",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "snort",
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
+      },
+      {
+        "name": "snort_unclosed",
+        "category": "snort",
+        "kind": "snort",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "snort",
+        "regex_pass": false,
+        "hrt_ok": true,
+        "regex_ok": true
+      },
+      {
+        "name": "snort_ipv6",
+        "category": "snort",
+        "kind": "snort",
+        "core": false,
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "snort",
+        "regex_pass": true,
+        "hrt_ok": true,
+        "regex_ok": false
       }
     ],
-    "_elapsed_s": 3.7
+    "_elapsed_s": 5.1
   }
 }

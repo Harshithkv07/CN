@@ -48,6 +48,8 @@ LAB_ATTACKS: dict[str, dict] = {
                  "tactic": "impact", "rule": "SYN_FLOOD"},
     "connflood": {"family": "dos", "techniques": ["T1499", "T1499.002", "T1498"],
                   "tactic": "impact", "rule": "CONN_FLOOD"},
+    "beacon": {"family": "c2", "techniques": ["T1071", "T1071.001", "T1102", "T1571", "T1008"],
+               "tactic": "command-and-control", "rule": "BEACONING"},
     "sshbf": {"family": "brute_force", "techniques": ["T1110", "T1110.001", "T1110.003"],
               "tactic": "credential-access", "rule": "BRUTE_FORCE"},
 }

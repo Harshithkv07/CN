@@ -19,6 +19,7 @@ from pydantic import ValidationError
 
 from hrt.agent.prompts import MITIGATION_SCHEMA, build_messages, correction, correction_for
 from hrt.guardrail.pipeline import Guardrail
+from hrt.guardrail.snort import render_snort
 from hrt.llm.base import LLM
 from hrt.models import Alert, Attempt, Incident, Mitigation, RetrievalTrace, Status
 from hrt.rag.retriever import Retriever
@@ -56,6 +57,19 @@ class AnalystAgent:
         self.use_rag = use_rag and retriever is not None
         self.top_k, self.max_attempts, self.hierarchical = top_k, max_attempts, hierarchical
         self.on_update = on_update or (lambda inc: None)
+
+    def _attach_snort(self, inc: Incident, mit: Mitigation) -> None:
+        """Second mitigation form: a Snort drop signature. One proposed by the LLM is used only if it
+        passes the static gate; otherwise one is rendered from the verified decision and checked too."""
+        src = str(inc.alert.source_ip)
+        if mit.snort_rule:
+            check = self.guardrail.check_snort(mit.snort_rule, src)
+            if check.passed:
+                inc.snort_rule, inc.snort_source, inc.snort_check = mit.snort_rule, "llm", check
+                return
+        rule = render_snort(src, inc.alert.detector.rules, mit.mitre_technique_id)
+        inc.snort_rule, inc.snort_source = rule, "template"
+        inc.snort_check = self.guardrail.check_snort(rule, src)
 
     def analyze(self, alert: Alert, incident: Incident | None = None) -> Incident:
         inc = incident or Incident(alert=alert)
@@ -109,6 +123,7 @@ class AnalystAgent:
             verdict = self.guardrail.check(mit.iptables_rule, str(alert.source_ip))
             attempt.verdict = inc.verdict = verdict
             if verdict.passed:
+                self._attach_snort(inc, mit)
                 inc.status = Status.SAFE
                 inc.mark("verified")
                 break

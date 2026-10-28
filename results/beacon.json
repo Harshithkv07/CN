@@ -1,0 +1,268 @@
+{
+  "suite": "beacon",
+  "generated_at": "2026-10-28 10:01:57",
+  "result": {
+    "window_seconds": 900.0,
+    "trials_per_cell": 8,
+    "benign_false_alarm_rate": {
+      "Poisson web client": {
+        "client_hours": 100,
+        "hours_with_a_beacon_alert": 0,
+        "false_alarm_rate_per_client_hour": 0.0
+      },
+      "client with sleep 2-6 s": {
+        "client_hours": 100,
+        "hours_with_a_beacon_alert": 9,
+        "false_alarm_rate_per_client_hour": 0.09
+      }
+    },
+    "rule": {
+      "min_flows": 6,
+      "max_iat_cv": 0.15,
+      "max_gap_ratio": 1.6,
+      "max_fwd_bytes": 2000,
+      "single_dst_and_port": true,
+      "max_flows_per_s": 2.0
+    },
+    "detection": {
+      "1s/0%": {
+        "period_s": 1,
+        "jitter": 0.0,
+        "detected": 1.0,
+        "median_seconds_to_alert": 10.0
+      },
+      "1s/10%": {
+        "period_s": 1,
+        "jitter": 0.1,
+        "detected": 1.0,
+        "median_seconds_to_alert": 9.2
+      },
+      "1s/20%": {
+        "period_s": 1,
+        "jitter": 0.2,
+        "detected": 1.0,
+        "median_seconds_to_alert": 9.4
+      },
+      "1s/30%": {
+        "period_s": 1,
+        "jitter": 0.3,
+        "detected": 1.0,
+        "median_seconds_to_alert": 9.6
+      },
+      "1s/50%": {
+        "period_s": 1,
+        "jitter": 0.5,
+        "detected": 1.0,
+        "median_seconds_to_alert": 29.4
+      },
+      "5s/0%": {
+        "period_s": 5,
+        "jitter": 0.0,
+        "detected": 1.0,
+        "median_seconds_to_alert": 25.0
+      },
+      "5s/10%": {
+        "period_s": 5,
+        "jitter": 0.1,
+        "detected": 1.0,
+        "median_seconds_to_alert": 25.5
+      },
+      "5s/20%": {
+        "period_s": 5,
+        "jitter": 0.2,
+        "detected": 1.0,
+        "median_seconds_to_alert": 25.6
+      },
+      "5s/30%": {
+        "period_s": 5,
+        "jitter": 0.3,
+        "detected": 0.5,
+        "median_seconds_to_alert": 26.7
+      },
+      "5s/50%": {
+        "period_s": 5,
+        "jitter": 0.5,
+        "detected": 0.125,
+        "median_seconds_to_alert": 28.6
+      },
+      "10s/0%": {
+        "period_s": 10,
+        "jitter": 0.0,
+        "detected": 1.0,
+        "median_seconds_to_alert": 50.0
+      },
+      "10s/10%": {
+        "period_s": 10,
+        "jitter": 0.1,
+        "detected": 1.0,
+        "median_seconds_to_alert": 50.2
+      },
+      "10s/20%": {
+        "period_s": 10,
+        "jitter": 0.2,
+        "detected": 1.0,
+        "median_seconds_to_alert": 49.3
+      },
+      "10s/30%": {
+        "period_s": 10,
+        "jitter": 0.3,
+        "detected": 0.5,
+        "median_seconds_to_alert": 53.9
+      },
+      "10s/50%": {
+        "period_s": 10,
+        "jitter": 0.5,
+        "detected": 0.125,
+        "median_seconds_to_alert": 59.7
+      },
+      "30s/0%": {
+        "period_s": 30,
+        "jitter": 0.0,
+        "detected": 1.0,
+        "median_seconds_to_alert": 150.0
+      },
+      "30s/10%": {
+        "period_s": 30,
+        "jitter": 0.1,
+        "detected": 1.0,
+        "median_seconds_to_alert": 150.0
+      },
+      "30s/20%": {
+        "period_s": 30,
+        "jitter": 0.2,
+        "detected": 1.0,
+        "median_seconds_to_alert": 151.4
+      },
+      "30s/30%": {
+        "period_s": 30,
+        "jitter": 0.3,
+        "detected": 0.25,
+        "median_seconds_to_alert": 153.4
+      },
+      "30s/50%": {
+        "period_s": 30,
+        "jitter": 0.5,
+        "detected": 0.25,
+        "median_seconds_to_alert": 157.5
+      },
+      "60s/0%": {
+        "period_s": 60,
+        "jitter": 0.0,
+        "detected": 1.0,
+        "median_seconds_to_alert": 300.0
+      },
+      "60s/10%": {
+        "period_s": 60,
+        "jitter": 0.1,
+        "detected": 1.0,
+        "median_seconds_to_alert": 306.0
+      },
+      "60s/20%": {
+        "period_s": 60,
+        "jitter": 0.2,
+        "detected": 1.0,
+        "median_seconds_to_alert": 311.9
+      },
+      "60s/30%": {
+        "period_s": 60,
+        "jitter": 0.3,
+        "detected": 0.625,
+        "median_seconds_to_alert": 325.4
+      },
+      "60s/50%": {
+        "period_s": 60,
+        "jitter": 0.5,
+        "detected": 0.25,
+        "median_seconds_to_alert": 289.5
+      },
+      "120s/0%": {
+        "period_s": 120,
+        "jitter": 0.0,
+        "detected": 1.0,
+        "median_seconds_to_alert": 600.0
+      },
+      "120s/10%": {
+        "period_s": 120,
+        "jitter": 0.1,
+        "detected": 1.0,
+        "median_seconds_to_alert": 599.4
+      },
+      "120s/20%": {
+        "period_s": 120,
+        "jitter": 0.2,
+        "detected": 1.0,
+        "median_seconds_to_alert": 616.4
+      },
+      "120s/30%": {
+        "period_s": 120,
+        "jitter": 0.3,
+        "detected": 0.875,
+        "median_seconds_to_alert": 632.2
+      },
+      "120s/50%": {
+        "period_s": 120,
+        "jitter": 0.5,
+        "detected": 0.125,
+        "median_seconds_to_alert": 652.9
+      }
+    },
+    "detection_10s_window_only": {
+      "1s/0%": 1.0,
+      "1s/10%": 1.0,
+      "1s/20%": 1.0,
+      "1s/30%": 1.0,
+      "1s/50%": 1.0,
+      "5s/0%": 0.0,
+      "5s/10%": 0.0,
+      "5s/20%": 0.0,
+      "5s/30%": 0.0,
+      "5s/50%": 0.0,
+      "10s/0%": 0.0,
+      "10s/10%": 0.0,
+      "10s/20%": 0.0,
+      "10s/30%": 0.0,
+      "10s/50%": 0.0,
+      "30s/0%": 0.0,
+      "30s/10%": 0.0,
+      "30s/20%": 0.0,
+      "30s/30%": 0.0,
+      "30s/50%": 0.0,
+      "60s/0%": 0.0,
+      "60s/10%": 0.0,
+      "60s/20%": 0.0,
+      "60s/30%": 0.0,
+      "60s/50%": 0.0,
+      "120s/0%": 0.0,
+      "120s/10%": 0.0,
+      "120s/20%": 0.0,
+      "120s/30%": 0.0,
+      "120s/50%": 0.0
+    },
+    "benign_false_alarms": {
+      "6 clients, Poisson web browsing (30 min)": {
+        "flows": 1659,
+        "beacon_alerts": 0
+      },
+      "client with sleep 2-6 s (lab benign.sh)": {
+        "flows": 443,
+        "beacon_alerts": 0
+      },
+      "TCP SYN scan, 1024 ports": {
+        "flows": 1024,
+        "beacon_alerts": 0
+      },
+      "constant-rate SYN flood, 500/s": {
+        "flows": 30000,
+        "beacon_alerts": 0
+      }
+    },
+    "known_limitation": {
+      "perfectly periodic monitoring agent (30 s)": {
+        "flows": 60,
+        "beacon_alerts": 14
+      }
+    },
+    "note": "Simulated implant traffic through the real TriageEngine; not real malware.",
+    "_elapsed_s": 16.1
+  }
+}

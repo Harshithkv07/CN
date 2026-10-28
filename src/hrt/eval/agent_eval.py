@@ -89,17 +89,24 @@ def _run_mode(agent: AnalystAgent, alerts, table, catalog: Retriever) -> dict:
     }
 
 
-def run(settings: Settings, fast: bool = False) -> dict:
-    from hrt.eval.cicids_data import build_sample, load_sample
+def run(settings: Settings, fast: bool = False, hard: bool = False, per_class: int | None = None,
+        modes: list[str] | None = None) -> dict:
+    """`hard=True` uses the extra CICIDS classes (Bot, Infiltration, web attacks, ...) that the Tier-1 rules
+    rarely flag, so retrieval has to work without a tactic prefilter. `modes` limits which of
+    rag_hier / rag_flat / no_rag run (each costs minutes per incident on CPU)."""
+    from hrt.eval.cicids_data import build_sample, load_hard_sample, load_sample
 
-    try:
-        df = load_sample(settings)
-    except SystemExit:
-        build_sample(settings)
-        df = load_sample(settings)
+    if hard:
+        df = load_hard_sample(settings)
+    else:
+        try:
+            df = load_sample(settings)
+        except SystemExit:
+            build_sample(settings)
+            df = load_sample(settings)
 
-    per_class = 3 if fast else 10
-    alerts = alerts_from_sample(df, per_class=per_class)
+    per_class = per_class or (3 if fast else (4 if hard else 10))
+    alerts = alerts_from_sample(df, per_class=per_class, group_size=150 if hard else 250)
     log.info("evaluating agent on %d synthesised incidents (%d families)",
              len(alerts), len({l for _, l in alerts}))
 
@@ -110,6 +117,7 @@ def run(settings: Settings, fast: bool = False) -> dict:
         log.warning("kernel sandbox unavailable; guardrail will report kernel stage as failed")
     llm = make_llm(settings)
 
+    wanted = set(modes or [])
     modes = {
         "rag_hier": AnalystAgent(llm, guardrail, retriever, use_rag=True, hierarchical=True,
                                  top_k=settings.retrieval_top_k, max_attempts=settings.max_attempts),
@@ -119,6 +127,8 @@ def run(settings: Settings, fast: bool = False) -> dict:
     }
     results = {}
     for name, agent in modes.items():
+        if wanted and name not in wanted:
+            continue
         log.info("mode %s ...", name)
         results[name] = _run_mode(agent, alerts, CIC_LABELS, retriever)
         log.info("mode %s done: %s", name, {k: v for k, v in results[name].items() if k != "details"})
@@ -126,8 +136,9 @@ def run(settings: Settings, fast: bool = False) -> dict:
         "hierarchical": _recall_at_k(retriever, alerts, CIC_LABELS),
         "avg_search_space_reduction": _avg_reduction(retriever, alerts),
     }
-    results["meta"] = {"llm": llm.name, "incidents": len(alerts), "per_class": per_class,
-                       "classes": sorted({l for _, l in alerts})}
+    results["meta"] = {"llm": llm.name, "incidents": len(alerts), "per_class": per_class, "hard": hard,
+                       "dataset": "cicids_hard (Bot, Infiltration, web attacks, ...)" if hard else "cicids_sample",
+                       "classes": sorted({l for _, l in alerts}), "max_attempts": settings.max_attempts}
     return results
 
 

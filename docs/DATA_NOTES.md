@@ -128,3 +128,25 @@ screenshot for the deck. The measured numbers remain in `results/telemetry.json`
 run the live benchmark again and then `hrt eval telemetry`. The absolute counts will differ; the
 per-alert reduction depends only on the alert type. If a capture needs to be kept, copy
 `data/zeek/conn.log` somewhere safe before running `hrt lab up`.
+
+## Harder CICIDS2018 classes (`hrt fetch-hard`)
+
+`data/cicids2018/cicids_hard.parquet` adds Bot (Friday 02-03), Infiltration (Thursday 01-03, Wednesday 28-02) and the
+DoS variants GoldenEye, Slowloris and SlowHTTPTest (Thursday 15-02, Friday 16-02). These are the classes the
+Tier-1 threshold rules rarely flag, so retrieval often runs with no tactic prefilter.
+
+Two facts shaped how it is built:
+
+- The "Processed Traffic Data" day files are **not time-ordered** (timestamps are shuffled through the file), so a
+  slice taken at a byte offset holds whatever mix of labels the file has. Common classes (Bot about 14 %,
+  Infiltration 11-28 %) yield hundreds of rows from one 8 MB slice. Rare ones (Brute Force -Web/-XSS, SQL injection:
+  under 600 rows per file) would need most of a 380 MB file at this link's roughly 100-200 KB/s, so they are
+  not in the hard set.
+- As with the other sample, the CSVs carry no source IPs, so agent incidents are synthesised from groups of flows with
+  documented TEST-NET attacker addresses.
+
+## Results kept from before the prompt fix
+
+`results/v1/` holds the JSON from the first complete run (original prompt, 3 LLM attempts per incident, old Isolation
+Forest setting). The website's latency chart and `results/summary.md` section 3c compare against it.
+

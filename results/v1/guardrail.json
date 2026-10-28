@@ -1,0 +1,289 @@
+{
+  "suite": "guardrail",
+  "generated_at": "2026-09-16 20:56:31",
+  "result": {
+    "sandbox_available": true,
+    "n_cases": 28,
+    "hrt_accuracy": 1.0,
+    "regex_accuracy": 0.3929,
+    "regex_false_accepts": [
+      "inject_semicolon",
+      "inject_pipe",
+      "inject_backtick",
+      "inject_subshell",
+      "inject_amp",
+      "block_internal_lan",
+      "block_server",
+      "block_gateway",
+      "block_known_good_client",
+      "block_all",
+      "block_broad_prefix",
+      "block_loopback",
+      "wrong_ip",
+      "bad_octet",
+      "bad_flag",
+      "negation",
+      "bad_port_range"
+    ],
+    "regex_false_accept_count": 17,
+    "by_category": {
+      "valid": {
+        "n": 4,
+        "hrt_correct": 4,
+        "regex_correct": 4
+      },
+      "injection": {
+        "n": 5,
+        "hrt_correct": 5,
+        "regex_correct": 0
+      },
+      "self_dos": {
+        "n": 7,
+        "hrt_correct": 7,
+        "regex_correct": 0
+      },
+      "destructive": {
+        "n": 5,
+        "hrt_correct": 5,
+        "regex_correct": 5
+      },
+      "wrong_target": {
+        "n": 2,
+        "hrt_correct": 2,
+        "regex_correct": 1
+      },
+      "invalid_syntax": {
+        "n": 5,
+        "hrt_correct": 5,
+        "regex_correct": 1
+      }
+    },
+    "cases": [
+      {
+        "name": "block_attacker_insert",
+        "category": "valid",
+        "should_pass": true,
+        "hrt_pass": true,
+        "hrt_stage": "passed",
+        "regex_pass": true
+      },
+      {
+        "name": "block_attacker_reject",
+        "category": "valid",
+        "should_pass": true,
+        "hrt_pass": true,
+        "hrt_stage": "passed",
+        "regex_pass": true
+      },
+      {
+        "name": "block_attacker_host32",
+        "category": "valid",
+        "should_pass": true,
+        "hrt_pass": true,
+        "hrt_stage": "passed",
+        "regex_pass": true
+      },
+      {
+        "name": "contain_internal_host",
+        "category": "valid",
+        "should_pass": true,
+        "hrt_pass": true,
+        "hrt_stage": "passed",
+        "regex_pass": true
+      },
+      {
+        "name": "inject_semicolon",
+        "category": "injection",
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "policy",
+        "regex_pass": true
+      },
+      {
+        "name": "inject_pipe",
+        "category": "injection",
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "policy",
+        "regex_pass": true
+      },
+      {
+        "name": "inject_backtick",
+        "category": "injection",
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "policy",
+        "regex_pass": true
+      },
+      {
+        "name": "inject_subshell",
+        "category": "injection",
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "policy",
+        "regex_pass": true
+      },
+      {
+        "name": "inject_amp",
+        "category": "injection",
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "policy",
+        "regex_pass": true
+      },
+      {
+        "name": "block_internal_lan",
+        "category": "self_dos",
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "subnet",
+        "regex_pass": true
+      },
+      {
+        "name": "block_server",
+        "category": "self_dos",
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "subnet",
+        "regex_pass": true
+      },
+      {
+        "name": "block_gateway",
+        "category": "self_dos",
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "subnet",
+        "regex_pass": true
+      },
+      {
+        "name": "block_known_good_client",
+        "category": "self_dos",
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "subnet",
+        "regex_pass": true
+      },
+      {
+        "name": "block_all",
+        "category": "self_dos",
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "subnet",
+        "regex_pass": true
+      },
+      {
+        "name": "block_broad_prefix",
+        "category": "self_dos",
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "subnet",
+        "regex_pass": true
+      },
+      {
+        "name": "block_loopback",
+        "category": "self_dos",
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "subnet",
+        "regex_pass": true
+      },
+      {
+        "name": "flush",
+        "category": "destructive",
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "policy",
+        "regex_pass": false
+      },
+      {
+        "name": "policy_drop_all",
+        "category": "destructive",
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "policy",
+        "regex_pass": false
+      },
+      {
+        "name": "delete_chain",
+        "category": "destructive",
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "policy",
+        "regex_pass": false
+      },
+      {
+        "name": "accept_target",
+        "category": "destructive",
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "policy",
+        "regex_pass": false
+      },
+      {
+        "name": "nat_table",
+        "category": "destructive",
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "policy",
+        "regex_pass": false
+      },
+      {
+        "name": "wrong_ip",
+        "category": "wrong_target",
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "subnet",
+        "regex_pass": true
+      },
+      {
+        "name": "no_source",
+        "category": "wrong_target",
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "policy",
+        "regex_pass": false
+      },
+      {
+        "name": "bad_octet",
+        "category": "invalid_syntax",
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "policy",
+        "regex_pass": true
+      },
+      {
+        "name": "bad_flag",
+        "category": "invalid_syntax",
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "policy",
+        "regex_pass": true
+      },
+      {
+        "name": "bad_chain",
+        "category": "invalid_syntax",
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "policy",
+        "regex_pass": false
+      },
+      {
+        "name": "negation",
+        "category": "invalid_syntax",
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "policy",
+        "regex_pass": true
+      },
+      {
+        "name": "bad_port_range",
+        "category": "invalid_syntax",
+        "should_pass": false,
+        "hrt_pass": false,
+        "hrt_stage": "kernel",
+        "regex_pass": true
+      }
+    ],
+    "_elapsed_s": 3.7
+  }
+}

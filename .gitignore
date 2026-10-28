@@ -25,3 +25,19 @@ data/logs/
 
 # Ollama runtime log
 ollama-serve.log
+
+# slide deck, report and paper build files live outside the code repo
+docs/deck/
+presentation/
+report/
+paper/
+*.pptx
+*.pdf
+*.aux
+*.bbl
+*.blg
+*.toc
+*.nav
+*.snm
+*.xdv
+*.synctex.gz

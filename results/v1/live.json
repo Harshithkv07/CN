@@ -1,0 +1,168 @@
+{
+  "suite": "live",
+  "generated_at": "2026-09-26 20:08:20",
+  "result": {
+    "target_seconds": 300,
+    "runs": [
+      {
+        "attack": "scan",
+        "detected": true,
+        "expected_rule": "PORT_SCAN",
+        "total_response_s": 101.62,
+        "to_alert": 1.82,
+        "to_retrieved": 2.28,
+        "to_verified": 100.8,
+        "to_deployed": 101.62,
+        "status": "DEPLOYED",
+        "attempts": 3,
+        "attacker_blocked_after": true,
+        "mitigation": "iptables -I INPUT -s 10.10.0.66 -j DROP",
+        "technique": "T1595.001"
+      },
+      {
+        "attack": "scan",
+        "detected": true,
+        "expected_rule": "PORT_SCAN",
+        "total_response_s": 86.13,
+        "to_alert": 1.36,
+        "to_retrieved": 2.55,
+        "to_verified": 85.36,
+        "to_deployed": 86.13,
+        "status": "DEPLOYED",
+        "attempts": 3,
+        "attacker_blocked_after": true,
+        "mitigation": "iptables -I INPUT -s 10.10.0.66 -j DROP",
+        "technique": "T1595.001"
+      },
+      {
+        "attack": "scan",
+        "detected": true,
+        "expected_rule": "PORT_SCAN",
+        "total_response_s": 102.72,
+        "to_alert": 1.26,
+        "to_retrieved": 2.45,
+        "to_verified": 101.9,
+        "to_deployed": 102.72,
+        "status": "DEPLOYED",
+        "attempts": 3,
+        "attacker_blocked_after": true,
+        "mitigation": "iptables -I INPUT -s 10.10.0.66 -j DROP",
+        "technique": "T1595.001"
+      },
+      {
+        "attack": "synflood",
+        "detected": true,
+        "expected_rule": "SYN_FLOOD",
+        "total_response_s": 119.72,
+        "to_alert": 1.68,
+        "to_retrieved": 5.61,
+        "to_verified": 118.03,
+        "to_deployed": 119.72,
+        "status": "DEPLOYED",
+        "attempts": 3,
+        "attacker_blocked_after": true,
+        "mitigation": "iptables -I INPUT 1 -s 10.10.0.66 -j DROP",
+        "technique": "T1499.001"
+      },
+      {
+        "attack": "synflood",
+        "detected": true,
+        "expected_rule": "SYN_FLOOD",
+        "total_response_s": 121.47,
+        "to_alert": 1.92,
+        "to_retrieved": 3.77,
+        "to_verified": 119.72,
+        "to_deployed": 121.47,
+        "status": "DEPLOYED",
+        "attempts": 3,
+        "attacker_blocked_after": true,
+        "mitigation": "iptables -I INPUT 1 -s 10.10.0.66 -j DROP",
+        "technique": "T1499.001"
+      },
+      {
+        "attack": "synflood",
+        "detected": true,
+        "expected_rule": "SYN_FLOOD",
+        "total_response_s": 108.43,
+        "to_alert": 4.46,
+        "to_retrieved": 6.17,
+        "to_verified": 107.69,
+        "to_deployed": 108.43,
+        "status": "DEPLOYED",
+        "attempts": 3,
+        "attacker_blocked_after": true,
+        "mitigation": "iptables -I INPUT 1 -s 10.10.0.66 -j DROP",
+        "technique": "T1499.001"
+      },
+      {
+        "attack": "sshbf",
+        "detected": true,
+        "expected_rule": "BRUTE_FORCE",
+        "total_response_s": 139.29,
+        "to_alert": 13.92,
+        "to_retrieved": 16.14,
+        "to_verified": 137.44,
+        "to_deployed": 139.29,
+        "status": "DEPLOYED",
+        "attempts": 3,
+        "attacker_blocked_after": true,
+        "mitigation": "iptables -I INPUT -s 10.10.0.66 -j DROP",
+        "technique": "T1110.001"
+      },
+      {
+        "attack": "sshbf",
+        "detected": true,
+        "expected_rule": "BRUTE_FORCE",
+        "total_response_s": 195.51,
+        "to_alert": 2.6,
+        "to_retrieved": 5.41,
+        "to_verified": 192.54,
+        "to_deployed": 195.51,
+        "status": "DEPLOYED",
+        "attempts": 3,
+        "attacker_blocked_after": true,
+        "mitigation": "iptables -I INPUT -s 10.10.0.66 -j DROP",
+        "technique": "T1110.001"
+      },
+      {
+        "attack": "sshbf",
+        "detected": true,
+        "expected_rule": "BRUTE_FORCE",
+        "total_response_s": 185.24,
+        "to_alert": 3.35,
+        "to_retrieved": 8.59,
+        "to_verified": 183.19,
+        "to_deployed": 185.24,
+        "status": "DEPLOYED",
+        "attempts": 3,
+        "attacker_blocked_after": true,
+        "mitigation": "iptables -I INPUT -s 10.10.0.66 -j DROP",
+        "technique": "T1110.001"
+      }
+    ],
+    "summary": {
+      "scan": {
+        "runs": 3,
+        "mean_s": 96.82,
+        "min_s": 86.13,
+        "max_s": 102.72,
+        "under_5min": true
+      },
+      "synflood": {
+        "runs": 3,
+        "mean_s": 116.54,
+        "min_s": 108.43,
+        "max_s": 121.47,
+        "under_5min": true
+      },
+      "sshbf": {
+        "runs": 3,
+        "mean_s": 173.35,
+        "min_s": 139.29,
+        "max_s": 195.51,
+        "under_5min": true
+      }
+    },
+    "_elapsed_s": 1210.0
+  }
+}

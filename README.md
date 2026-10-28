@@ -54,7 +54,7 @@ hrt lab build        # build victim / attacker / sandbox Docker images
 hrt lab up           # start the lab; let benign traffic run ~2 min
 hrt train            # fit the Tier-1 Isolation Forest on benign traffic
 
-hrt serve            # orchestrator + dashboard at http://localhost:8000   (terminal B)
+hrt serve            # orchestrator + website at http://localhost:8000      (terminal B)
 hrt triage           # live Tier-1 loop                                    (terminal C)
 hrt demo             # scripted end-to-end attack -> mitigation demo       (terminal D)
 ```
@@ -76,6 +76,32 @@ close the window to stop that piece.
 | `run_live_benchmark.cmd` | `hrt eval live` (needs lab + the two above) | `data\logs\live.log` |
 | `run_agent_eval.cmd` | `hrt eval agent --fast` (~40 min on CPU) | `data\logs\agent.log` |
 | `run_agent_eval_full.cmd` | `hrt eval agent` (10 alerts per class, ~2.5 h on CPU) | `data\logs\agent_full.log` |
+| `run_queue_llama.cmd` | `hrt eval agent` then `hrt eval injection` on llama3.2:3b | `data\logs\queue_llama.log` |
+| `run_queue_rest.cmd` | waits for the above, then the hard-class run, the second model and `hrt report` | `data\logs\queue_rest.log` |
+| `fetch_hard.cmd` | `hrt fetch-hard` | `data\logs\fetch_hard.log` |
+
+## The website (for demos and reviewers)
+
+`hrt serve` also serves a single-page site at <http://localhost:8000> that follows one attack from the first
+packet to the firewall rule:
+
+- **The film** - a pinned, scroll-scrubbed canvas: raw packets stream in, Tier 1 drops almost all of them, ten
+  survivors pass reasoning and the four guardrail gates and land as a firewall rule. Captions use measured numbers.
+- **Run it** - an animated diagram (Network, Zeek, Tier 1, Tier 2, Tier 3, Firewall). Packet dots are
+  driven by the real flows per second; alert and rule tokens move when the incident actually moves. Buttons start
+  a port scan, SYN flood, SSH brute force or C2 beacon from the attacker container (needs the lab).
+- **Incident trace** - five steps for any incident: what Tier 1 saw, what was retrieved, what the model said
+  (every retry, with the verifier's reason), the four guardrail gates, and the outcome with the iptables rule,
+  the Snort signature, a latency waterfall and Approve / Reject.
+- **How it works** - a scroll-driven funnel from 634,464 records to one verified rule.
+- **Evidence** - charts drawn from `results/*.json` through `/api/results`, nothing typed by hand.
+- **Honest limits** - what the results do not show.
+- **Replay a recorded run** - plays back real incident records captured from the live lab with the waiting
+  time compressed, so the demo works with Docker or the model off. Refresh the recording with
+  `python scripts/export_recorded.py` after a live run. `?replay=1` starts it on load.
+
+Plain HTML, CSS and ES modules; GSAP 3.12 and ScrollTrigger are vendored under `dashboard/static/vendor/`, so
+nothing is fetched from a CDN except the (optional) Google web fonts. It respects `prefers-reduced-motion`.
 
 ## Evaluation
 
@@ -85,6 +111,12 @@ hrt eval triage      # CICIDS2018 detection: HRT vs SIEM rules vs supervised RF
 hrt eval agent       # attribution + RAG hallucination ablation (needs Ollama; --fast ~40 min CPU, full ~2-3 h)
 hrt eval async       # nodal-delay: async webhook vs inline LLM
 hrt eval telemetry   # measured raw-telemetry vs alert-JSON byte reduction on the lab capture
+hrt eval beacon      # C2 beaconing: detection vs period and jitter, and false alarms (no Docker, seconds)
+hrt eval injection   # prompt injection and RAG poisoning, layer by layer
+hrt fetch-hard       # download Bot / Infiltration / DoS-variant slices of CICIDS2018 (~40 MB)
+hrt eval agent --hard --tag hard                 # harder-class ablation
+HRT_OLLAMA_MODEL=qwen2.5:3b hrt eval agent --tag qwen --modes rag_hier,no_rag   # a second model
+HRT_LLM_PROVIDER=langchain hrt serve             # route the model call through LangChain (pip install -e ".[langchain]")
 hrt eval live        # end-to-end time-to-response on the live lab (needs serve+triage+lab)
 hrt eval all && hrt report      # writes results/summary.md + charts
 ```
@@ -95,11 +127,13 @@ Full tables and charts are in [`results/summary.md`](results/summary.md). Headli
 | What | Result |
 |---|---|
 | **Live time-to-response** (attack start → verified rule deployed, 3 runs each) | mean: port scan **97 s**, SYN flood **117 s**, SSH brute force **173 s** — 9/9 deployed, all under the 5-min target, max 196 s |
-| **Rule verification** (28 adversarial rules) | HRT guardrail **100 %** vs regex validator **39 %**; the regex accepted 17 unsafe rules (injection, blocking the gateway/server/LAN, `0.0.0.0/0`, …) |
+| **Rule verification** (91 adversarial cases: the original 28 plus IPv6/encoding tricks, CIDR overlap, ordering, conflicts with deployed rules, option smuggling and 20 Snort signatures) | HRT guardrail **100 %** (0 unsafe accepted, 0 safe rejected) vs regex validator **45 %** (accepted 50 unsafe rules). The cases were written by the team that wrote the gate: coverage of known tricks, not an independent audit |
 | **Telemetry reduction** (634,464 Zeek records, 242 MB) | median alert is **99.82 %** smaller than the flows it summarises; everything logged vs everything sent to the LLM: **99.997 %** smaller |
 | **Async vs inline LLM** (3 s inference, 2 workers) | inline ingest lag grows to 58 s at 1 alert/s and 1,767 s at 20/s; async webhook + queue stays at 0 s |
-| **Tier-1 detection** (CICIDS2018, 34,105 flows) | SIEM-style rules F1 0.978; Isolation Forest (unsupervised, benign-only) P 0.93 / R 0.53 / ROC-AUC 0.96 — catches brute force (recall ≈1.0), misses volumetric DoS/DDoS, which the rules cover; supervised RF ≈1.0 as an upper bound |
-| **Incident attribution / RAG ablation** (40 CICIDS incidents, 10 each: DDoS-HOIC, DoS-Hulk, FTP & SSH brute force) | with RAG (flat or hierarchical): **40/40** correct technique and tactic, 0 invented IDs, 40/40 verified rules. **Without RAG: 1/40 technique, 0/40 tactic, 19/40 cite ATT&CK IDs that don't exist** (e.g. `T1210.001`), DoS/DDoS labelled as brute force, 1 escalation. Tactic prefilter cuts the search space by 92.8 % with recall@1 = 1.0 |
+| **Tier-1 detection** (CICIDS2018, 34,105 flows, same 5 % benign false-positive budget) | Isolation Forest (unsupervised, benign-only): recall **0.53 → 0.999** (F1 0.68 → 0.98) after raising `max_samples` from 256 to 2048, chosen on a validation split; SIEM-style rules F1 0.978; supervised RF ≈1.0 as an upper bound. The families are easy to separate: read the ranking, not the absolute figures |
+| **C2 beaconing** (simulated implants through the real Tier-1 engine) | the old 10 s window saw only 1 s beacons; the 15-minute per-destination rule detects 5 s to 2 min beacons at 100 % up to ±20 % jitter, 25-88 % at ±30 %, and misses most at ±50 %. False alarms: 0 % of Poisson web client-hours, 9 % for a client that sleeps a random 2-6 s; a perfectly periodic benign monitor is flagged (a known limit) |
+| **Prompt injection / RAG poisoning** (14 payloads) | 0 of 14 reached the prompt from log fields; a fully obedient stub LLM got 0 of 14 harmful rules past grounding and the gate; the live-model test is in `results/injection.json` |
+| **Incident attribution / RAG ablation** (first run, original prompt; the re-run after the prompt fix is in `results/summary.md`; 40 CICIDS incidents, 10 each: DDoS-HOIC, DoS-Hulk, FTP & SSH brute force) | with RAG (flat or hierarchical): **40/40** correct technique and tactic, 0 invented IDs, 40/40 verified rules. **Without RAG: 1/40 technique, 0/40 tactic, 19/40 cite ATT&CK IDs that don't exist** (e.g. `T1210.001`), DoS/DDoS labelled as brute force, 1 escalation. Tactic prefilter cuts the search space by 92.8 % with recall@1 = 1.0 |
 
 ## Layout
 
@@ -108,17 +142,16 @@ src/hrt/
   telemetry/   Zeek conn.log + CICIDS2018 parsers -> normalised Flow
   triage/      windowed features, threshold rules, PyOD Isolation Forest, live engine
   rag/         ATT&CK/KEV ingest, hierarchical retriever, alert->query builder
-  llm/         provider interface: Ollama (JSON-schema constrained) + Fake (tests)
+  llm/         provider interface: Ollama (JSON-schema constrained), LangChain adapter, Fake (tests)
   agent/       analyst loop: retrieve -> prompt -> validate -> guardrail -> self-correct/escalate
-  guardrail/   policy, subnet (bitwise AND), conflicts, kernel sandbox, gated deploy
+  guardrail/   policy, subnet (bitwise AND), conflicts, kernel sandbox, Snort signature gate, gated deploy
   orchestrator/ FastAPI webhook + queue + SQLite store + SSE
-  dashboard/   live SOC console (no external CDNs)
+  dashboard/   the website: live pipeline, incident trace, evidence (GSAP vendored)
   eval/        triage / agent / guardrail / async / telemetry / live suites + report
 docker/        victim, attacker, sandbox images; Zeek policy; compose
 scripts/       Windows launchers (see above)
 tests/         pytest (Docker-dependent tests auto-skip)
-docs/          DEMO_RUNBOOK.md, DATA_NOTES.md (data provenance + environment caveats),
-               deck/ (update_deck.py builds ../CN SEM3 - Final Review.pptx from results/*.json)
+docs/          DEMO_RUNBOOK.md, DATA_NOTES.md (data provenance + environment caveats), THREAT_MODEL.md,
 results/       measured results (JSON), summary.md, charts
 ```
 
@@ -128,9 +161,23 @@ results/       measured results (JSON), summary.md, charts
   incidents synthesised from them use documented TEST-NET attacker addresses.
 - The "SIEM baseline" is a faithful set of SIEM-style correlation rules implemented here, labelled
   as such — not Splunk/QRadar themselves.
+- The project brief suggested LangChain. The default agent loop in `src/hrt/agent/analyst.py` calls ChromaDB and
+  Ollama's `/api/chat` directly, so every step (retrieve, prompt, validate, guardrail, retry) is visible in one
+  short file. `HRT_LLM_PROVIDER=langchain` routes the model call through a LangChain runnable
+  (`src/hrt/llm/langchain.py`, tested against LangChain's fake chat model) and leaves the loop untouched. LangChain
+  does not orchestrate the retrieval or the retry loop.
+- The Snort/Suricata signature is **rendered from the verified decision** (or accepted from the model if it passes) and
+  checked by a static allowlist parser. The lab has no Snort engine, so a signature is never loaded and the kernel
+  does not verify it; only the iptables rule is kernel-verified.
+- CVE data is already in the RAG store (the CISA known-exploited-vulnerabilities list, a second ChromaDB collection).
+  It is shown as patch context for the targeted service, not used for attribution.
 - Search-space reduction and telemetry-reduction figures are **measured per run**, not assumed.
 - The Isolation Forest is weak on volumetric DoS/DDoS in CICIDS2018 (recall 0.21 / 0.00); the
   deterministic rules carry those classes. The two are complementary, which is why Tier 1 is hybrid.
+- C2 beaconing is demonstrated on **simulated** implant traffic (`hrt eval beacon`) and by a lab attack that starts
+  a beacon loop in the attacker container (`hrt lab attack beacon`). The CICIDS2018 slices used here contain no
+  botnet traffic. Heavily jittered beacons are missed, and a perfectly periodic benign agent (a 30 s monitoring
+  poll) looks identical to a beacon on timing alone. See `docs/THREAT_MODEL.md`.
 - The agent evaluation covers 40 incidents from 4 CICIDS classes (each costs 1-2 minutes of CPU
   inference, 2 h 49 min for all three modes). Flat and hierarchical RAG tie at 100 % and gave
   identical answers on every incident: for these attack types flat search already ranks the right

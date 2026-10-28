@@ -63,7 +63,7 @@ RULES: dict[str, tuple[tuple[str, ...], str, Callable[[AlertFeatures], bool]]] =
     "BEACONING": (
         ("command-and-control",),
         "periodic small connections to one host and port (regular inter-arrival times)",
-        lambda f: f.n_flows >= 8 and f.iat_cv <= 0.25 and f.mean_fwd_bytes <= 2_000
+        lambda f: f.n_flows >= 8 and f.iat_cv <= 0.25 and f.mean_fwd_bytes <= 2_000 and f.flows_per_s <= 5
         and f.n_dst_hosts == 1 and f.n_dst_ports <= 2 and f.dominant_port_share >= 0.8,
     ),
     "EXFILTRATION": (
@@ -72,6 +72,21 @@ RULES: dict[str, tuple[tuple[str, ...], str, Callable[[AlertFeatures], bool]]] =
         lambda f: f.fwd_bytes >= 50_000_000,
     ),
 }
+
+
+# Long-window C2 beacon rule. The 10 s window used by the other rules only ever holds a beacon that
+# checks in about once a second; real implants wait 5-120 s. TriageEngine keeps a small per
+# (source, destination, port) history of tiny connections and applies this rule to it.
+BEACON_MIN_FLOWS = 6
+BEACON_MAX_CV = 0.15         # inter-arrival coefficient of variation; uniform jitter of +-j gives ~0.58*j
+BEACON_MAX_GAP_RATIO = 1.6   # longest gap / shortest gap; a jittery human-ish client spreads far wider
+BEACON_MAX_FWD_BYTES = 2_000
+
+
+def beaconing_long(f: AlertFeatures) -> bool:
+    return (f.n_flows >= BEACON_MIN_FLOWS and f.iat_cv <= BEACON_MAX_CV and f.mean_fwd_bytes <= BEACON_MAX_FWD_BYTES
+            and f.n_dst_hosts == 1 and f.n_dst_ports == 1
+            and f.flows_per_s <= 2.0)      # slower than 2/s: a regular flood is the flood rules' job
 
 
 def evaluate_rules(f: AlertFeatures) -> list[str]:

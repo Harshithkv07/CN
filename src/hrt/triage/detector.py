@@ -27,10 +27,17 @@ if TYPE_CHECKING:
     from pyod.models.iforest import IForest
 
 
-def _fit_iforest(X: np.ndarray, seed: int) -> "IForest":
+# max_samples=256 is the textbook default and under-fits this data: with 1024, Isolation Forest recall
+# at the same 5% benign false-positive budget rose from 0.51 to 0.93 (results/triage.json, sweep).
+IFOREST_TREES, IFOREST_MAX_SAMPLES = 300, 1024
+
+
+def _fit_iforest(X: np.ndarray, seed: int, n_estimators: int = IFOREST_TREES,
+                 max_samples: int = IFOREST_MAX_SAMPLES) -> "IForest":
     from pyod.models.iforest import IForest  # lazy: heavy compiled dependency
 
-    model = IForest(n_estimators=200, max_samples=min(256, len(X)), random_state=seed, contamination=0.01)
+    model = IForest(n_estimators=n_estimators, max_samples=min(max_samples, len(X)), random_state=seed,
+                    contamination=0.01)
     model.fit(X)
     return model
 
@@ -106,14 +113,16 @@ class FlowDetector:
     the operating point is chosen the way an unsupervised deployment would.
     """
 
-    def __init__(self, target_fpr: float = 0.05, seed: int = 42):
+    def __init__(self, target_fpr: float = 0.05, seed: int = 42, n_estimators: int = IFOREST_TREES,
+                 max_samples: int = IFOREST_MAX_SAMPLES):
         self.target_fpr, self.seed = target_fpr, seed
+        self.n_estimators, self.max_samples = n_estimators, max_samples
         self.model: IForest | None = None
         self.threshold: float | None = None
 
     def fit(self, benign: pd.DataFrame) -> "FlowDetector":
         X = flow_matrix(benign)
-        self.model = _fit_iforest(X, self.seed)
+        self.model = _fit_iforest(X, self.seed, self.n_estimators, self.max_samples)
         # threshold = the (1 - target_fpr) quantile of benign scores -> ~target_fpr benign flagged
         self.threshold = float(np.quantile(self.model.decision_function(X), 1.0 - self.target_fpr))
         return self

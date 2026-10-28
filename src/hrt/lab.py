@@ -88,7 +88,8 @@ def firewall_rules() -> list[str]:
 
 # --- attacks -----------------------------------------------------------------------------
 def attack(kind: str, target: str = VICTIM_IP) -> None:
-    runners = {"scan": _scan, "synflood": _synflood, "sshbf": _sshbf, "benign": _benign, "connflood": _connflood}
+    runners = {"scan": _scan, "synflood": _synflood, "sshbf": _sshbf, "benign": _benign, "connflood": _connflood,
+               "beacon": _beacon}
     if kind not in runners:
         raise SystemExit(f"unknown attack '{kind}'; choose from {', '.join(runners)}")
     print(f"[lab] launching {kind} against {target}")
@@ -126,6 +127,17 @@ def _sshbf(target: str) -> None:
               f"for i in $(seq 1 30); do timeout 2 ssh -o StrictHostKeyChecking=no -o "
               f"ConnectTimeout=1 baduser$i@{target} true 2>/dev/null; done"])
     print("[lab] SSH brute force finished")
+
+
+def _beacon(target: str, period: float = 8.0, jitter: float = 0.1, count: int = 25) -> None:
+    """Simulated C2 implant: a tiny HTTP check-in every `period` s (+-`jitter`), `count` times, running in the
+    background of the attacker container. Tier 1's long-window BEACONING rule needs 6 of them."""
+    script = (f"i=0; while [ $i -lt {count} ]; do curl -s -m 3 -o /dev/null -A 'Mozilla/5.0' "
+              f"\"http://{target}/beacon?id=hrt-$i\"; i=$((i+1)); "
+              f"sleep $(awk 'BEGIN{{srand(); print {period}*(1+{jitter}*(2*rand()-1))}}'); done")
+    _exec("hrt-attacker", ["sh", "-c", script], detach=True)
+    print(f"[lab] beacon started: {count} check-ins every ~{period:.0f}s (about {count * period:.0f}s total); "
+          f"expect an alert after ~{6 * period:.0f}s")
 
 
 def _benign(target: str) -> None:

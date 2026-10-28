@@ -28,7 +28,15 @@ DAYS = {
     "fri-16-02": "Friday-16-02-2018_TrafficForML_CICFlowMeter.csv",      # DoS Hulk / SlowHTTP
     "wed-21-02": "Wednesday-21-02-2018_TrafficForML_CICFlowMeter.csv",   # DDoS LOIC-UDP / HOIC
     "fri-02-03": "Friday-02-03-2018_TrafficForML_CICFlowMeter.csv",      # Bot
+    "wed-28-02": "Wednesday-28-02-2018_TrafficForML_CICFlowMeter.csv",   # Infiltration
+    "thu-01-03": "Thursday-01-03-2018_TrafficForML_CICFlowMeter.csv",    # Infiltration
+    "thu-22-02": "Thursday-22-02-2018_TrafficForML_CICFlowMeter.csv",    # Brute Force -Web / -XSS, SQL Injection
+    "fri-23-02": "Friday-23-02-2018_TrafficForML_CICFlowMeter.csv",      # Brute Force -Web / -XSS, SQL Injection
 }
+HARD_PARQUET = "cicids_hard.parquet"
+# classes that the original 4-attack sample lacks: C2, post-exploitation, and web attacks whose flows look
+# a lot like normal browsing, so the Tier-1 rules rarely fire for them
+HARD_LABELS = ["Bot", "Infilteration", "DoS attacks-GoldenEye", "DoS attacks-Slowloris", "DoS attacks-SlowHTTPTest"]
 SAMPLE_PARQUET = "cicids_sample.parquet"
 
 
@@ -163,3 +171,50 @@ SYNTH_ATTACKER = {
     "botnet": "198.51.100.41", "web_attack": "198.51.100.51", "recon": "198.51.100.61",
     "infiltration": "198.51.100.71",
 }
+
+
+# The day files are *not* time-ordered (rows are shuffled), so attack rows are spread through each file in
+# proportion to how common they are. Rare classes (SQL injection, XSS: under 100 rows per file) would need most of
+# the file; the classes below are common enough that one slice per file yields hundreds of rows.
+HARD_PLAN: list[tuple[str, float, int]] = [
+    ("fri-02-03", 0.50, 8),    # Bot (C2)
+    ("thu-01-03", 0.45, 8),    # Infiltration (post-exploitation); this file is mostly attack rows
+    ("wed-28-02", 0.40, 6),    # Infiltration
+    ("thu-15-02", 0.30, 10),   # DoS GoldenEye and Slowloris
+    ("fri-16-02", 0.55, 8),    # DoS SlowHTTPTest
+]
+
+
+def build_hard_sample(settings: Settings, per_class: int = 600, benign_cap: int = 3000, seed: int = 42,
+                      plan: list[tuple[str, float, int]] | None = None) -> Path:
+    """Stream one slice per planned day file and write ``cicids_hard.parquet``."""
+    out = settings.cicids_dir / HARD_PARQUET
+    settings.cicids_dir.mkdir(parents=True, exist_ok=True)
+    frames = []
+    for day, frac, cap_mb in plan or HARD_PLAN:
+        url = f"{BUCKET}/{DAYS[day]}"
+        try:
+            size, header = _file_size(url), None
+            header = _fetch_header(url)
+            log.info("hard slice %s @%.0f%% (cap %d MB)", day, frac * 100, cap_mb)
+            df = _stream_until_enough(url, 10**9, 10**9, byte_cap=cap_mb << 20, start_byte=int(size * frac), header=header)
+            if not df.empty:
+                df["day"] = day
+                frames.append(_clean_labels(df))
+                log.info("  labels: %s", dict(Counter(df["label"])))
+        except Exception as exc:
+            log.warning("slice %s failed: %s", day, exc)
+    if not frames:
+        raise SystemExit("no CICIDS slices could be fetched")
+    combined = _clean_labels(pd.concat(frames, ignore_index=True)).drop_duplicates()
+    sample = _sample_group(combined, benign_cap, per_class, seed)
+    sample.to_parquet(out, index=False)
+    log.info("wrote %s (%d rows) class counts: %s", out, len(sample), dict(Counter(sample["label"])))
+    return out
+
+
+def load_hard_sample(settings: Settings) -> pd.DataFrame:
+    out = settings.cicids_dir / HARD_PARQUET
+    if not out.exists():
+        raise SystemExit(f"{out} not found; run `hrt fetch-hard`")
+    return pd.read_parquet(out)

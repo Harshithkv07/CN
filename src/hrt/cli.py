@@ -39,6 +39,13 @@ def cmd_lab(args) -> int:
     return 0
 
 
+def cmd_fetch_hard(args) -> int:
+    from hrt.eval.cicids_data import build_hard_sample
+
+    print(build_hard_sample(get_settings()))
+    return 0
+
+
 def cmd_build_kb(args) -> int:
     from hrt.rag.ingest import build_kb
 
@@ -85,7 +92,7 @@ def cmd_triage(args) -> int:
     tailer = ConnLogTailer(s.conn_log, from_start=args.from_start)
     print(f"[triage] tailing {s.conn_log} -> {s.webhook_url}")
     try:
-        engine.run(tailer, stats_cb=sink.stats)
+        engine.run(tailer, stats_cb=sink.stats, stats_every=1.0)
     except KeyboardInterrupt:
         print("\n[triage] stopped")
     return 0
@@ -123,7 +130,8 @@ def cmd_replay(args) -> int:
 def cmd_eval(args) -> int:
     from hrt.eval import runner
 
-    return runner.run(args.suite, get_settings(), fast=args.fast)
+    return runner.run(args.suite, get_settings(), fast=args.fast, tag=args.tag, hard=args.hard or None,
+                      per_class=args.per_class, modes=args.modes.split(",") if args.modes else None)
 
 
 def cmd_report(args) -> int:
@@ -151,6 +159,8 @@ def build_parser() -> argparse.ArgumentParser:
     lab.set_defaults(func=cmd_lab)
 
     sub.add_parser("fetch-intel", help="download MITRE ATT&CK + CISA KEV").set_defaults(func=cmd_fetch_intel)
+    sub.add_parser("fetch-hard", help="download extra CICIDS2018 classes (Bot, Infiltration, web attacks)"
+                   ).set_defaults(func=cmd_fetch_hard)
     sub.add_parser("build-kb", help="embed threat intel into ChromaDB").set_defaults(func=cmd_build_kb)
 
     tr = sub.add_parser("train", help="fit the benign-baseline Isolation Forest from lab traffic")
@@ -171,8 +181,12 @@ def build_parser() -> argparse.ArgumentParser:
     rp.set_defaults(func=cmd_replay)
 
     ev = sub.add_parser("eval", help="run an evaluation suite")
-    ev.add_argument("suite", choices=["triage", "agent", "guardrail", "live", "async", "telemetry", "all"])
+    ev.add_argument("suite", choices=["triage", "agent", "guardrail", "live", "async", "telemetry", "beacon", "injection", "all"])
     ev.add_argument("--fast", action="store_true", help="smaller samples for a quick check")
+    ev.add_argument("--tag", default="", help="save as results/<suite>_<tag>.json (e.g. a model name)")
+    ev.add_argument("--hard", action="store_true", help="agent suite: use the harder CICIDS classes")
+    ev.add_argument("--per-class", type=int, default=None, help="agent suite: incidents per attack class")
+    ev.add_argument("--modes", default="", help="agent suite: comma list of rag_hier,rag_flat,no_rag")
     ev.set_defaults(func=cmd_eval)
 
     sub.add_parser("report", help="build results/summary.md and charts").set_defaults(func=cmd_report)
