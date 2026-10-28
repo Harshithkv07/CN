@@ -1,53 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HRT-Agent SOC Console</title>
-<link rel="stylesheet" href="/static/style.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HRT-Agent · Live SOC Dashboard</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23070707'/%3E%3Ccircle cx='9' cy='16' r='3' fill='%23c8523d'/%3E%3Ccircle cx='23' cy='16' r='3' fill='%23d4af6a'/%3E%3Cpath d='M12 16h8' stroke='%23ece6da' stroke-width='2'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="/static/css/dash.css">
 </head>
 <body>
-<header>
-  <div class="brand">
-    <span class="logo">HRT</span>
-    <div>
-      <h1>HRT-Agent SOC Console</h1>
-      <div class="sub">Hybrid RAG-Telemetry &middot; autonomous Level-1 analyst</div>
+<div class="app">
+  <header class="bar">
+    <div class="brand"><i class="mark" aria-hidden="true"></i>HRT-Agent <span class="muted" style="font:400 .8rem var(--font);color:var(--muted)">autonomous SOC analyst</span></div>
+    <span class="mode" id="mode" role="status">connecting</span>
+    <span class="clock" id="clock" aria-hidden="true"></span>
+    <span class="spacer"></span>
+    <div class="ctl" role="group" aria-label="Controls">
+      <button class="btn demo" id="btn-demo">Run 2–3 min demo</button>
+      <span class="sep" aria-hidden="true"></span>
+      <button class="btn" data-attack="scan" title="nmap SYN scan">Port scan</button>
+      <button class="btn" data-attack="synflood">SYN flood</button>
+      <button class="btn" data-attack="sshbf">SSH brute force</button>
+      <button class="btn" data-attack="beacon">C2 beacon</button>
+      <span class="sep" aria-hidden="true"></span>
+      <button class="btn" id="btn-replay" title="Play a recorded run (no Docker or model needed)">Replay</button>
+      <button class="btn" id="btn-reset">Reset</button>
     </div>
-  </div>
-  <div class="health" id="health">
-    <span class="pill" id="pill-stream">stream</span>
-    <span class="pill" id="pill-rag">RAG</span>
-    <span class="pill" id="pill-sandbox">sandbox</span>
-    <span class="pill" id="pill-deploy">deploy</span>
-  </div>
-</header>
+  </header>
 
-<section class="metrics" id="metrics">
-  <div class="metric"><div class="mv" id="m-flows">0</div><div class="ml">flows ingested</div></div>
-  <div class="metric"><div class="mv" id="m-alerts">0</div><div class="ml">alerts (Tier 1)</div></div>
-  <div class="metric"><div class="mv" id="m-reduction">--</div><div class="ml">telemetry reduction</div></div>
-  <div class="metric"><div class="mv" id="m-incidents">0</div><div class="ml">incidents</div></div>
-  <div class="metric"><div class="mv ok" id="m-deployed">0</div><div class="ml">rules deployed</div></div>
-  <div class="metric"><div class="mv warn" id="m-escalated">0</div><div class="ml">escalated</div></div>
-</section>
+  <main class="grid">
+    <section class="panel traffic" aria-label="Network traffic">
+      <h2>Network traffic <small id="trf-src">Zeek conn.log, live</small></h2>
+      <div class="kpis">
+        <div class="kpi" id="k-rate-w"><b id="k-rate">0</b><span>flows / second</span></div>
+        <div class="kpi"><b id="k-flows">0</b><span>flows seen</span></div>
+        <div class="kpi"><b id="k-alerts">0</b><span>alerts to the LLM</span></div>
+        <div class="kpi"><b id="k-red">–</b><span>telemetry reduction</span></div>
+      </div>
+      <div class="chartbox"><canvas id="chart" role="img" aria-label="Flows per second over the last 90 seconds"></canvas></div>
+    </section>
 
-<main>
-  <div class="col">
-    <h2>Incident queue</h2>
-    <div id="incident-list" class="list"><div class="empty">Waiting for alerts&hellip;</div></div>
-  </div>
-  <div class="col detail">
-    <h2>Incident detail</h2>
-    <div id="detail"><div class="empty">Select an incident to see the three-tier trace.</div></div>
-  </div>
-</main>
+    <section class="panel ticker" aria-label="Live flows">
+      <h2>Live flows <small id="tick-note"></small></h2>
+      <ol id="ticker"></ol>
+    </section>
 
-<div class="firewall">
-  <h2>Live firewall ruleset <span class="sub" id="fw-src">(protected server)</span></h2>
-  <pre id="firewall">(none deployed)</pre>
+    <section class="panel sources" aria-label="Top sources">
+      <h2>Top sources</h2>
+      <ul id="sources"></ul>
+    </section>
+
+    <section class="panel lane" id="lane" aria-label="Pipeline"></section>
+
+    <section class="panel incident" aria-label="Current incident">
+      <div class="inc-head"><h2>Incident</h2><div class="tabs" id="tabs"></div><span class="status" id="status" style="display:none"></span></div>
+      <div class="cols4" id="cols"></div>
+    </section>
+
+    <section class="panel side" aria-label="Firewall and events">
+      <h2>Firewall <small>rules deployed</small></h2>
+      <ul class="rules" id="rules"><li class="empty">none yet</li></ul>
+      <h2>Events</h2>
+      <ul class="feed" id="feed"></ul>
+    </section>
+  </main>
+
+  <footer class="caption idle" id="caption" aria-live="polite">
+    <span class="step" id="cap-step">ready</span>
+    <span class="say" id="cap-say">Press <b>Run 2–3 min demo</b> to watch one attack travel through the pipeline.</span>
+    <span class="tm" id="cap-tm"></span>
+  </footer>
 </div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<script src="/static/app.js"></script>
+<script src="/static/vendor/gsap.min.js"></script>
+<script type="module" src="/static/js/dash.js"></script>
 </body>
 </html>

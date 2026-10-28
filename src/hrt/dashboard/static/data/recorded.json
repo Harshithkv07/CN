@@ -1,0 +1,275 @@
+{
+ "exported": "2026-10-28 20:32:34",
+ "incidents": [
+  {
+   "incident_id": "c6682b5059",
+   "alert": {
+    "alert_id": "e2ca3852ef49",
+    "source_ip": "10.10.0.66",
+    "dst_ips": [
+     "10.10.0.10"
+    ],
+    "first_seen": 1793164361.823048,
+    "last_seen": 1793164400.71266,
+    "detected_at": 1793164402.4746509,
+    "detector": {
+     "rules": [
+      "BEACONING"
+     ],
+     "ml_score": null,
+     "ml_threshold": null,
+     "ml_anomaly": false
+    },
+    "features": {
+     "window_seconds": 900.0,
+     "n_flows": 6,
+     "n_tcp": 6,
+     "n_udp": 0,
+     "n_dst_hosts": 1,
+     "n_dst_ports": 1,
+     "top_dst_ports": [
+      80
+     ],
+     "dominant_port_share": 1.0,
+     "syn_count": 6,
+     "ack_count": 6,
+     "syn_ack_ratio": 1.0,
+     "half_open_frac": 0.0,
+     "rej_frac": 0.0,
+     "flows_per_s": 0.154,
+     "mean_duration_s": 0.0013,
+     "fwd_bytes": 534,
+     "bwd_bytes": 1764,
+     "mean_fwd_bytes": 89.0,
+     "iat_cv": 0.0516
+    },
+    "raw_flow_count": 6,
+    "raw_bytes": 2409,
+    "origin": "zeek",
+    "ground_truth": null
+   },
+   "status": "SAFE",
+   "times": {
+    "queued": 1793164402.4810617,
+    "analysis_started": 1793164402.4882355,
+    "retrieved": 1793164407.2601173,
+    "llm_1": 1793164483.6558073,
+    "verified": 1793164484.6075075,
+    "finished": 1793164484.6075134
+   },
+   "retrieval": {
+    "query": "Command-and-control beaconing: periodic small connections at regular intervals to a single remote host, characteristic of malware C2 check-in over an application protocol. Observed over 900s: 6 TCP flows to 1 host(s) across 1 destination port(s); most targeted 80 (HTTP).",
+    "candidate_tactics": [
+     "command-and-control"
+    ],
+    "candidates": 45,
+    "total_docs": 697,
+    "search_space_reduction": 0.9354,
+    "docs": [
+     {
+      "mitre_id": "T1071.001",
+      "name": "Application Layer Protocol: Web Protocols",
+      "tactics": [
+       "command-and-control"
+      ],
+      "score": 0.6169
+     },
+     {
+      "mitre_id": "T1102.002",
+      "name": "Web Service: Bidirectional Communication",
+      "tactics": [
+       "command-and-control"
+      ],
+      "score": 0.5842
+     },
+     {
+      "mitre_id": "T1205.001",
+      "name": "Traffic Signaling: Port Knocking",
+      "tactics": [
+       "defense-evasion",
+       "persistence",
+       "command-and-control"
+      ],
+      "score": 0.5798
+     },
+     {
+      "mitre_id": "T1102.003",
+      "name": "Web Service: One-Way Communication",
+      "tactics": [
+       "command-and-control"
+      ],
+      "score": 0.5776
+     },
+     {
+      "mitre_id": "T1568",
+      "name": "Dynamic Resolution",
+      "tactics": [
+       "command-and-control"
+      ],
+      "score": 0.5748
+     }
+    ],
+    "cves": [
+     {
+      "cve": "CVE-2015-1635",
+      "product": "Microsoft HTTP.sys",
+      "text": "CVE-2015-1635 Microsoft HTTP.sys: Microsoft HTTP.sys Remote Code Execution Vulnerability. Microsoft HTTP protocol stack (HTTP.sys) contains a vulnerability that allows for remote code execution. Required action: Apply updates per vendor instructions."
+     },
+     {
+      "cve": "CVE-2021-31166",
+      "product": "Microsoft HTTP Protocol Stack",
+      "text": "CVE-2021-31166 Microsoft HTTP Protocol Stack: Microsoft HTTP Protocol Stack Remote Code Execution Vulnerability. Microsoft HTTP Protocol Stack contains a vulnerability in http.sys that allows for remote code execution. Required action: Apply updates per vendor instructions."
+     }
+    ],
+    "seconds": 4.769
+   },
+   "attempts": [
+    {
+     "number": 1,
+     "llm_seconds": 76.393,
+     "prompt_chars": 7976,
+     "raw_output": "{\n  \"incident_summary\": \"T1071.001 Application Layer Protocol: Web Protocols\",\n  \"evidence\": [\n    \"10.10.0.66\",\n    \"dst_ips: 10.10.0.10\",\n    \"features: top_dst_ports: [80]\"\n  ],\n  \"attack_type\": \"command-and-control\",\n  \"mitre_technique_id\": \"T1071.001\",\n  \"mitre_technique_name\": \"Application Layer Protocol: Web Protocols\",\n  \"mitre_tactic\": \"command-and-control\",\n  \"confidence\": 0.8,\n  \"recommended_actions\": [\n    \"iptables -I INPUT 1 -s 10.10.0.66 -j DROP\"\n  ],\n  \"iptables_rule\": \"iptables -I INPUT 1 -s 10.10.0.66 -j DROP\"\n}",
+     "mitigation": {
+      "incident_summary": "T1071.001 Application Layer Protocol: Web Protocols",
+      "attack_type": "command-and-control",
+      "mitre_technique_id": "T1071.001",
+      "mitre_technique_name": "Application Layer Protocol: Web Protocols",
+      "mitre_tactic": "command-and-control",
+      "confidence": 0.8,
+      "evidence": [
+       "10.10.0.66",
+       "dst_ips: 10.10.0.10",
+       "features: top_dst_ports: [80]"
+      ],
+      "recommended_actions": [
+       "iptables -I INPUT 1 -s 10.10.0.66 -j DROP"
+      ],
+      "iptables_rule": "iptables -I INPUT 1 -s 10.10.0.66 -j DROP",
+      "snort_rule": ""
+     },
+     "error": null,
+     "verdict": {
+      "passed": true,
+      "checks": [
+       {
+        "stage": "policy",
+        "passed": true,
+        "detail": "-I INPUT ... -j DROP is within policy",
+        "retryable": true,
+        "elapsed_ms": 0.4420999903231859
+       },
+       {
+        "stage": "subnet",
+        "passed": true,
+        "detail": "10.10.0.66/32 is outside all 5 protected subnets",
+        "retryable": true,
+        "elapsed_ms": 0.23049999435897917
+       },
+       {
+        "stage": "conflict",
+        "passed": true,
+        "detail": "no duplicate or shadowing rule",
+        "retryable": true,
+        "elapsed_ms": 0.9038999996846542
+       },
+       {
+        "stage": "kernel",
+        "passed": true,
+        "detail": "iptables-restore --test and commit exited 0; 5 rules loaded in isolated netns",
+        "retryable": true,
+        "elapsed_ms": 948.5762999975123
+       }
+      ],
+      "rule": "iptables -I INPUT 1 -s 10.10.0.66 -j DROP",
+      "argv": [
+       "iptables",
+       "-I",
+       "INPUT",
+       "1",
+       "-s",
+       "10.10.0.66",
+       "-j",
+       "DROP"
+      ],
+      "restore_line": "-I INPUT 1 -s 10.10.0.66 -j DROP"
+     }
+    }
+   ],
+   "mitigation": {
+    "incident_summary": "T1071.001 Application Layer Protocol: Web Protocols",
+    "attack_type": "command-and-control",
+    "mitre_technique_id": "T1071.001",
+    "mitre_technique_name": "Application Layer Protocol: Web Protocols",
+    "mitre_tactic": "command-and-control",
+    "confidence": 0.8,
+    "evidence": [
+     "10.10.0.66",
+     "dst_ips: 10.10.0.10",
+     "features: top_dst_ports: [80]"
+    ],
+    "recommended_actions": [
+     "iptables -I INPUT 1 -s 10.10.0.66 -j DROP"
+    ],
+    "iptables_rule": "iptables -I INPUT 1 -s 10.10.0.66 -j DROP",
+    "snort_rule": ""
+   },
+   "verdict": {
+    "passed": true,
+    "checks": [
+     {
+      "stage": "policy",
+      "passed": true,
+      "detail": "-I INPUT ... -j DROP is within policy",
+      "retryable": true,
+      "elapsed_ms": 0.4420999903231859
+     },
+     {
+      "stage": "subnet",
+      "passed": true,
+      "detail": "10.10.0.66/32 is outside all 5 protected subnets",
+      "retryable": true,
+      "elapsed_ms": 0.23049999435897917
+     },
+     {
+      "stage": "conflict",
+      "passed": true,
+      "detail": "no duplicate or shadowing rule",
+      "retryable": true,
+      "elapsed_ms": 0.9038999996846542
+     },
+     {
+      "stage": "kernel",
+      "passed": true,
+      "detail": "iptables-restore --test and commit exited 0; 5 rules loaded in isolated netns",
+      "retryable": true,
+      "elapsed_ms": 948.5762999975123
+     }
+    ],
+    "rule": "iptables -I INPUT 1 -s 10.10.0.66 -j DROP",
+    "argv": [
+     "iptables",
+     "-I",
+     "INPUT",
+     "1",
+     "-s",
+     "10.10.0.66",
+     "-j",
+     "DROP"
+    ],
+    "restore_line": "-I INPUT 1 -s 10.10.0.66 -j DROP"
+   },
+   "grounded": true,
+   "escalation_reason": null,
+   "deploy_output": null,
+   "snort_rule": "drop ip 10.10.0.66 any -> $HOME_NET any (msg:\"HRT-Agent block T1071.001 BEACONING from 10.10.0.66\"; classtype:trojan-activity; sid:1127586; rev:1;)",
+   "snort_source": "template",
+   "snort_check": {
+    "stage": "snort",
+    "passed": true,
+    "detail": "drop signature for 10.10.0.66/32 (sid 1127586) is within policy; static check only",
+    "retryable": true,
+    "elapsed_ms": 0.0
+   }
+  }
+ ]
+}
