@@ -1,0 +1,197 @@
+{
+  "suite": "agent_hard",
+  "generated_at": "2026-10-28 22:29:16",
+  "result": {
+    "rag_hier": {
+      "n": 8,
+      "technique_accuracy": 0.5,
+      "tactic_accuracy": 0.5,
+      "grounding_rate": 1.0,
+      "invalid_id_rate": 0.0,
+      "rule_valid_rate": 1.0,
+      "escalation_rate": 0.0,
+      "median_latency_s": 56.54,
+      "median_attempts": 1,
+      "details": [
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1498",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": true
+        },
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1498",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": true
+        },
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1498",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": true
+        },
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1498",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": true
+        },
+        {
+          "label": "Infilteration",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1498.001",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": false
+        },
+        {
+          "label": "Infilteration",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1498.001",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": false
+        },
+        {
+          "label": "Infilteration",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1498.001",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": false
+        },
+        {
+          "label": "Infilteration",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1498.001",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": false
+        }
+      ]
+    },
+    "no_rag": {
+      "n": 8,
+      "technique_accuracy": 0.0,
+      "tactic_accuracy": 0.0,
+      "grounding_rate": 0.0,
+      "invalid_id_rate": 1.0,
+      "rule_valid_rate": 1.0,
+      "escalation_rate": 0.0,
+      "median_latency_s": 24.98,
+      "median_attempts": 1,
+      "details": [
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1210.001",
+          "known": false,
+          "tactic": "Reconnaissance",
+          "technique_ok": false
+        },
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1210.001",
+          "known": false,
+          "tactic": "Reconnaissance",
+          "technique_ok": false
+        },
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1210.001",
+          "known": false,
+          "tactic": "Reconnaissance",
+          "technique_ok": false
+        },
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1210.001",
+          "known": false,
+          "tactic": "Reconnaissance",
+          "technique_ok": false
+        },
+        {
+          "label": "Infilteration",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1210.001",
+          "known": false,
+          "tactic": "Lateral Movement",
+          "technique_ok": false
+        },
+        {
+          "label": "Infilteration",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1210.001",
+          "known": false,
+          "tactic": "Lateral Movement",
+          "technique_ok": false
+        },
+        {
+          "label": "Infilteration",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1210.001",
+          "known": false,
+          "tactic": "Reconnaissance",
+          "technique_ok": false
+        },
+        {
+          "label": "Infilteration",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1210.001",
+          "known": false,
+          "tactic": "Lateral Movement",
+          "technique_ok": false
+        }
+      ]
+    },
+    "retrieval": {
+      "hierarchical": {
+        "recall@1": 0.5,
+        "recall@3": 1.0,
+        "recall@5": 1.0
+      },
+      "avg_search_space_reduction": 0.0
+    },
+    "meta": {
+      "llm": "ollama:llama3.2:3b",
+      "incidents": 8,
+      "per_class": 4,
+      "hard": true,
+      "dataset": "cicids_hard (Bot, Infiltration, web attacks, ...)",
+      "classes": [
+        "DoS attacks-Hulk",
+        "Infilteration"
+      ],
+      "max_attempts": 3
+    },
+    "_elapsed_s": 673.8
+  }
+}

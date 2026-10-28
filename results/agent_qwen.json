@@ -1,0 +1,271 @@
+{
+  "suite": "agent_qwen",
+  "generated_at": "2026-10-29 00:18:03",
+  "result": {
+    "rag_hier": {
+      "n": 12,
+      "technique_accuracy": 1.0,
+      "tactic_accuracy": 1.0,
+      "grounding_rate": 1.0,
+      "invalid_id_rate": 0.0,
+      "rule_valid_rate": 1.0,
+      "escalation_rate": 0.0,
+      "median_latency_s": 61.83,
+      "median_attempts": 1,
+      "details": [
+        {
+          "label": "DDOS attack-HOIC",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1499.002",
+          "known": true,
+          "tactic": "Impact",
+          "technique_ok": true
+        },
+        {
+          "label": "DDOS attack-HOIC",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1499.002",
+          "known": true,
+          "tactic": "Impact",
+          "technique_ok": true
+        },
+        {
+          "label": "DDOS attack-HOIC",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1499.002",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": true
+        },
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1499.002",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": true
+        },
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1499.002",
+          "known": true,
+          "tactic": "Impact",
+          "technique_ok": true
+        },
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1499.002",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": true
+        },
+        {
+          "label": "FTP-BruteForce",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "Credential Access",
+          "technique_ok": true
+        },
+        {
+          "label": "FTP-BruteForce",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1110.003",
+          "known": true,
+          "tactic": "Credential-Access",
+          "technique_ok": true
+        },
+        {
+          "label": "FTP-BruteForce",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1110.003",
+          "known": true,
+          "tactic": "Credential-Access",
+          "technique_ok": true
+        },
+        {
+          "label": "SSH-Bruteforce",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1110.003",
+          "known": true,
+          "tactic": "Credential-Access",
+          "technique_ok": true
+        },
+        {
+          "label": "SSH-Bruteforce",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1110.003",
+          "known": true,
+          "tactic": "Credential Access",
+          "technique_ok": true
+        },
+        {
+          "label": "SSH-Bruteforce",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1110.003",
+          "known": true,
+          "tactic": "Credential Access",
+          "technique_ok": true
+        }
+      ]
+    },
+    "no_rag": {
+      "n": 12,
+      "technique_accuracy": 0.5,
+      "tactic_accuracy": 0.1667,
+      "grounding_rate": 0.0,
+      "invalid_id_rate": 0.0,
+      "rule_valid_rate": 1.0,
+      "escalation_rate": 0.0,
+      "median_latency_s": 31.82,
+      "median_attempts": 1,
+      "details": [
+        {
+          "label": "DDOS attack-HOIC",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1110.002",
+          "known": true,
+          "tactic": "Impersonation",
+          "technique_ok": false
+        },
+        {
+          "label": "DDOS attack-HOIC",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1110.002",
+          "known": true,
+          "tactic": "Scanning",
+          "technique_ok": false
+        },
+        {
+          "label": "DDOS attack-HOIC",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1110.002",
+          "known": true,
+          "tactic": "Impersonation",
+          "technique_ok": false
+        },
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1110.002",
+          "known": true,
+          "tactic": "Defense Evasion",
+          "technique_ok": false
+        },
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1110.002",
+          "known": true,
+          "tactic": "Impersonation",
+          "technique_ok": false
+        },
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1110.002",
+          "known": true,
+          "tactic": "Impersonation",
+          "technique_ok": false
+        },
+        {
+          "label": "FTP-BruteForce",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1110",
+          "known": true,
+          "tactic": "Command and Control",
+          "technique_ok": true
+        },
+        {
+          "label": "FTP-BruteForce",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "Credential Access",
+          "technique_ok": true
+        },
+        {
+          "label": "FTP-BruteForce",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1110.002",
+          "known": true,
+          "tactic": "Command and Control (C2)",
+          "technique_ok": true
+        },
+        {
+          "label": "SSH-Bruteforce",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1110.002",
+          "known": true,
+          "tactic": "Impersonation",
+          "technique_ok": true
+        },
+        {
+          "label": "SSH-Bruteforce",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1110.002",
+          "known": true,
+          "tactic": "Impersonation",
+          "technique_ok": true
+        },
+        {
+          "label": "SSH-Bruteforce",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1110.001",
+          "known": true,
+          "tactic": "Credential Access",
+          "technique_ok": true
+        }
+      ]
+    },
+    "retrieval": {
+      "hierarchical": {
+        "recall@1": 1.0,
+        "recall@3": 1.0,
+        "recall@5": 1.0
+      },
+      "avg_search_space_reduction": 0.9283
+    },
+    "meta": {
+      "llm": "ollama:qwen2.5:3b",
+      "incidents": 12,
+      "per_class": 3,
+      "hard": false,
+      "dataset": "cicids_sample",
+      "classes": [
+        "DDOS attack-HOIC",
+        "DoS attacks-Hulk",
+        "FTP-BruteForce",
+        "SSH-Bruteforce"
+      ],
+      "max_attempts": 3
+    },
+    "_elapsed_s": 1085.2
+  }
+}

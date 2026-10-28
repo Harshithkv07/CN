@@ -58,13 +58,12 @@ LLM: `ollama:llama3.2:3b`, 40 synthesised incidents.
 
 | Mode | Technique acc. | Tactic acc. | Grounding | Invalid-ID | Rule-valid | Escalation |
 |---|---|---|---|---|---|---|
-| no_rag | 0.025 | 0.0 | 0.0 | 0.475 | 0.975 | 0.025 |
-| rag_flat | 1.0 | 1.0 | 1.0 | 0.0 | 1.0 | 0.0 |
+| no_rag | 0.25 | 0.0 | 0.0 | 0.25 | 1.0 | 0.0 |
 | rag_hier | 1.0 | 1.0 | 1.0 | 0.0 | 1.0 | 0.0 |
 
-Median analysis latency (s): rag_hier 97.98, rag_flat 103.53, no_rag 56.13.
+Median analysis latency (s): rag_hier 59.54, no_rag 26.11.
 
-LLM attempts per incident (the guardrail feeds each rejection back): rag_hier 2 attempts x4, 3 attempts x36; rag_flat 2 attempts x4, 3 attempts x36; no_rag 3 attempts x40.
+LLM attempts per incident (the guardrail feeds each rejection back): rag_hier 1 attempt x40; no_rag 1 attempt x40.
 
 Hierarchical retrieval: recall@1 1.0, recall@3 1.0, recall@5 1.0; the tactic prefilter shrinks the search space by 92.8% on average.
 
@@ -74,15 +73,37 @@ What the no-RAG model actually answered, attempt by attempt, is in [`agent_probe
 
 ![agent](chart_agent.png)
 
+## 3b. Harder classes and a second model
+
+**Harder CICIDS classes (Bot, Infiltration, DoS variants)**: `ollama:llama3.2:3b`, 8 incidents, classes: DoS attacks-Hulk, Infilteration.
+
+| Mode | Technique acc. | Tactic acc. | Grounding | Invalid-ID | Rule-valid | Escalation | Median s |
+|---|---|---|---|---|---|---|---|
+| no_rag | 0.0 | 0.0 | 0.0 | 1.0 | 1.0 | 0.0 | 24.98 |
+| rag_hier | 0.5 | 0.5 | 1.0 | 0.0 | 1.0 | 0.0 | 56.54 |
+
+**Second model (Qwen 2.5 3B), standard classes**: `ollama:qwen2.5:3b`, 12 incidents, classes: DDOS attack-HOIC, DoS attacks-Hulk, FTP-BruteForce, SSH-Bruteforce.
+
+| Mode | Technique acc. | Tactic acc. | Grounding | Invalid-ID | Rule-valid | Escalation | Median s |
+|---|---|---|---|---|---|---|---|
+| no_rag | 0.5 | 0.1667 | 0.0 | 0.0 | 1.0 | 0.0 | 31.82 |
+| rag_hier | 1.0 | 1.0 | 1.0 | 0.0 | 1.0 | 0.0 | 61.83 |
+
+**Second model (Qwen 2.5 3B), harder classes**: `ollama:qwen2.5:3b`, 6 incidents, classes: DoS attacks-Hulk, Infilteration.
+
+| Mode | Technique acc. | Tactic acc. | Grounding | Invalid-ID | Rule-valid | Escalation | Median s |
+|---|---|---|---|---|---|---|---|
+| no_rag | 0.0 | 0.0 | 0.0 | 0.1667 | 1.0 | 0.0 | 27.99 |
+| rag_hier | 0.3333 | 0.5 | 1.0 | 0.0 | 1.0 | 0.0 | 62.62 |
+
 ## 3c. Latency: before and after the prompt fix
 
 The model used to omit `-I`, then append with `-A` behind an ACCEPT rule, so two of three attempts were wasted. The prompt now shows the exact rule form.
 
 | Mode | Median seconds before | after | Median LLM calls before | after |
 |---|---|---|---|---|
-| rag_hier | 97.98 | 97.98 | 3 | 3 |
-| rag_flat | 103.53 | 103.53 | 3 | 3 |
-| no_rag | 56.13 | 56.13 | 3 | 3 |
+| rag_hier | 97.98 | 59.54 | 3 | 1 |
+| no_rag | 56.13 | 26.11 | 3 | 1 |
 
 ## 3d. C2 beaconing
 
@@ -129,7 +150,7 @@ Simulated implant traffic through the real TriageEngine; not real malware.
 
 - Telemetry path: 0 of 14 payloads placed in log fields reached the prompt.
 - Obedient-LLM path (worst case): 0 of 14 harmful rules accepted.
-- Live model (ollama:llama3.2:3b): followed the injection in 0/4 cases with the fenced prompt and 1/4 with an unfenced one; harmful rules accepted after the guardrail: 0 and 0.
+- Live model (ollama:llama3.2:3b): followed the injection in 0/14 cases with the fenced prompt and 3/14 with an unfenced one; harmful rules accepted after the guardrail: 0 and 0.
 
 Limits: Attribution can still be steered among the retrieved techniques (grounding checks membership, not correctness). Payloads are a hand-written corpus, not an adaptive attacker. Poisoning is simulated by appending text to retrieved documents.
 

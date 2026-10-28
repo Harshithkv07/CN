@@ -31,3 +31,14 @@ def test_gate_matches_expectation(case):
 def test_regex_baseline_is_weaker():
     wrong = sum(regex_accepts(c) != c.should_pass for c in EXTENDED)
     assert wrong >= 20      # it accepts most of the unsafe rules
+
+
+def test_mitigation_rescales_percent_confidence():
+    from hrt.models import Mitigation
+    base = dict(incident_summary="s", attack_type="a", mitre_technique_id="T1499", mitre_tactic="impact",
+                iptables_rule="iptables -I INPUT 1 -s 198.51.100.31 -j DROP")
+    assert Mitigation(confidence=90, **base).confidence == 0.9
+    assert Mitigation(confidence=0.4, **base).confidence == 0.4
+    import pytest
+    with pytest.raises(Exception):
+        Mitigation(confidence=250, **base)

@@ -1,0 +1,161 @@
+{
+  "suite": "agent_hard_qwen",
+  "generated_at": "2026-10-29 00:27:18",
+  "result": {
+    "rag_hier": {
+      "n": 6,
+      "technique_accuracy": 0.3333,
+      "tactic_accuracy": 0.5,
+      "grounding_rate": 1.0,
+      "invalid_id_rate": 0.0,
+      "rule_valid_rate": 1.0,
+      "escalation_rate": 0.0,
+      "median_latency_s": 62.62,
+      "median_attempts": 1,
+      "details": [
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1496.002",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": false
+        },
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1498",
+          "known": true,
+          "tactic": "Impact",
+          "technique_ok": true
+        },
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1498",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": true
+        },
+        {
+          "label": "Infilteration",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1498.001",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": false
+        },
+        {
+          "label": "Infilteration",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1498.001",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": false
+        },
+        {
+          "label": "Infilteration",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1498",
+          "known": true,
+          "tactic": "impact",
+          "technique_ok": false
+        }
+      ]
+    },
+    "no_rag": {
+      "n": 6,
+      "technique_accuracy": 0.0,
+      "tactic_accuracy": 0.0,
+      "grounding_rate": 0.0,
+      "invalid_id_rate": 0.1667,
+      "rule_valid_rate": 1.0,
+      "escalation_rate": 0.0,
+      "median_latency_s": 27.99,
+      "median_attempts": 1,
+      "details": [
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1110",
+          "known": true,
+          "tactic": "Defense Evasion",
+          "technique_ok": false
+        },
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1055",
+          "known": true,
+          "tactic": "Command and Control",
+          "technique_ok": false
+        },
+        {
+          "label": "DoS attacks-Hulk",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1068.001",
+          "known": false,
+          "tactic": "Execution",
+          "technique_ok": false
+        },
+        {
+          "label": "Infilteration",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1110.002",
+          "known": true,
+          "tactic": "Impersonation",
+          "technique_ok": false
+        },
+        {
+          "label": "Infilteration",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1110",
+          "known": true,
+          "tactic": "Defense Evasion",
+          "technique_ok": false
+        },
+        {
+          "label": "Infilteration",
+          "status": "SAFE",
+          "attempts": 1,
+          "technique": "T1110.002",
+          "known": true,
+          "tactic": "Initial Access",
+          "technique_ok": false
+        }
+      ]
+    },
+    "retrieval": {
+      "hierarchical": {
+        "recall@1": 0.5,
+        "recall@3": 1.0,
+        "recall@5": 1.0
+      },
+      "avg_search_space_reduction": 0.0
+    },
+    "meta": {
+      "llm": "ollama:qwen2.5:3b",
+      "incidents": 6,
+      "per_class": 3,
+      "hard": true,
+      "dataset": "cicids_hard (Bot, Infiltration, web attacks, ...)",
+      "classes": [
+        "DoS attacks-Hulk",
+        "Infilteration"
+      ],
+      "max_attempts": 3
+    },
+    "_elapsed_s": 552.5
+  }
+}

@@ -14,7 +14,7 @@ from enum import StrEnum
 from ipaddress import IPv4Address
 from typing import Any, Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 @dataclass(slots=True)
@@ -102,6 +102,14 @@ class Mitigation(BaseModel):
     recommended_actions: list[str] = Field(default_factory=list)
     iptables_rule: str
     snort_rule: str = ""       # optional; if absent, a signature is rendered from the verified decision
+
+    @field_validator("confidence", mode="before")
+    @classmethod
+    def _percent_confidence(cls, v):
+        """Some small models answer 90 for 0.9. Rescale a percentage; anything else stays strict."""
+        if isinstance(v, (int, float)) and not isinstance(v, bool) and 1 < v <= 100:
+            return v / 100
+        return v
 
 
 class GuardrailCheck(BaseModel):
