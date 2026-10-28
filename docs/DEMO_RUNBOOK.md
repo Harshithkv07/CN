@@ -43,7 +43,7 @@ hrt serve
 ```
 Open <http://localhost:8000>. The pill in the top bar should read *live · RAG · sandbox*.
 The attack buttons on the page start the same attacks as `hrt lab attack ...`, and
-**Replay a recorded run** plays real, previously captured incidents if the lab or the model is off.
+**Replay** plays a real, previously captured incident if the lab or the model is off.
 
 Terminal C — Tier-1 triage (tails Zeek, POSTs alerts to the orchestrator):
 ```bash
@@ -95,8 +95,7 @@ hrt lab attack benign      # HTTP from an allowed host still succeeds
 - `hrt lab attack synflood` and `hrt lab attack sshbf` show other techniques (T1499, T1110).
 - `hrt lab attack beacon` starts a simulated C2 implant (8 s check-ins, 25 times). Tier 1's long-window
   rule alerts after six check-ins (about 50 s), the model attributes it to a command-and-control technique.
-- On the website, open the **Evidence** section: every chart is drawn from `results/*.json`.
-- Backup plan: `http://localhost:8000/?replay=1` starts the recorded run on load.
+- Backup plan: `http://localhost:8000/?replay=1` starts the recorded replay on load.
 - The subnet guardrail: if the model ever proposed blocking `10.10.0.0/24`, Tier 3 refuses it and
   escalates — no self-inflicted DoS.
 - `hrt eval guardrail` on the spot: HRT verifier vs a regex baseline on adversarial rules.

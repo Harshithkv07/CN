@@ -80,28 +80,24 @@ close the window to stop that piece.
 | `run_queue_rest.cmd` | waits for the above, then the hard-class run, the second model and `hrt report` | `data\logs\queue_rest.log` |
 | `fetch_hard.cmd` | `hrt fetch-hard` | `data\logs\fetch_hard.log` |
 
-## The website (for demos and reviewers)
+## Pipeline monitor (dashboard)
 
-`hrt serve` also serves a single-page site at <http://localhost:8000> that follows one attack from the first
-packet to the firewall rule:
+`hrt serve` also serves a single-screen monitor at <http://localhost:8000> for watching the pipeline work. It has no
+scrolling and no explanatory text:
 
-- **The film** - a pinned, scroll-scrubbed canvas: raw packets stream in, Tier 1 drops almost all of them, ten
-  survivors pass reasoning and the four guardrail gates and land as a firewall rule. Captions use measured numbers.
-- **Run it** - an animated diagram (Network, Zeek, Tier 1, Tier 2, Tier 3, Firewall). Packet dots are
-  driven by the real flows per second; alert and rule tokens move when the incident actually moves. Buttons start
-  a port scan, SYN flood, SSH brute force or C2 beacon from the attacker container (needs the lab).
-- **Incident trace** - five steps for any incident: what Tier 1 saw, what was retrieved, what the model said
-  (every retry, with the verifier's reason), the four guardrail gates, and the outcome with the iptables rule,
-  the Snort signature, a latency waterfall and Approve / Reject.
-- **How it works** - a scroll-driven funnel from 634,464 records to one verified rule.
-- **Evidence** - charts drawn from `results/*.json` through `/api/results`, nothing typed by hand.
-- **Honest limits** - what the results do not show.
-- **Replay a recorded run** - plays back real incident records captured from the live lab with the waiting
-  time compressed, so the demo works with Docker or the model off. Refresh the recording with
-  `python scripts/export_recorded.py` after a live run. `?replay=1` starts it on load.
+- **Network traffic:** flows per second (from Zeek via the triage loop), flows seen, alerts sent to the LLM, telemetry
+  reduction, a live flow ticker and the top sources.
+- **Pipeline lane:** traffic, Zeek, Tier 1, Tier 2, Tier 3 and firewall, each with a live counter and its last timings
+  (retrieval and LLM seconds, guardrail milliseconds). A dot crosses a connector when an incident really crosses it.
+- **Incident:** four columns for the selected incident: what Tier 1 summarised, what Tier 2 retrieved and answered,
+  each guardrail gate with its reason, and the outcome with the rule, the Snort signature and Approve / Reject.
+- **Firewall and events:** deployed rules and a timestamped event feed (alerts, retrieval, each model attempt, each
+  gate, status changes).
+- **Controls:** launch a scan, SYN flood, SSH brute force or beacon in the lab (needs Docker), **Replay** a recorded
+  incident (no Docker or model needed; its traffic panel is labelled illustrative), **Reset**.
 
-Plain HTML, CSS and ES modules; GSAP 3.12 and ScrollTrigger are vendored under `dashboard/static/vendor/`, so
-nothing is fetched from a CDN except the (optional) Google web fonts. It respects `prefers-reduced-motion`.
+Plain HTML, CSS and ES modules; GSAP is vendored under `dashboard/static/vendor/`. `python scripts/export_recorded.py`
+refreshes the recording from the incident store.
 
 ## Evaluation
 
@@ -146,7 +142,7 @@ src/hrt/
   agent/       analyst loop: retrieve -> prompt -> validate -> guardrail -> self-correct/escalate
   guardrail/   policy, subnet (bitwise AND), conflicts, kernel sandbox, Snort signature gate, gated deploy
   orchestrator/ FastAPI webhook + queue + SQLite store + SSE
-  dashboard/   the website: live pipeline, incident trace, evidence (GSAP vendored)
+  dashboard/   single-screen pipeline monitor (traffic, pipeline lane, incident, firewall, events)
   eval/        triage / agent / guardrail / async / telemetry / live suites + report
 docker/        victim, attacker, sandbox images; Zeek policy; compose
 scripts/       Windows launchers (see above)

@@ -4,7 +4,6 @@ import { initTraffic } from "./traffic.js";
 import { initLane } from "./lane.js";
 import { initPanel, log } from "./panel.js";
 import { startReplay, stopReplay, isReplaying } from "./replay.js";
-import { toggleDemo, isDemo } from "./demo.js";
 
 function mode() {
   const el = $("#mode"), sm = state.summary;
@@ -22,22 +21,18 @@ $$("[data-attack]").forEach((b) => b.addEventListener("click", async () => {
   try { await launch(b.dataset.attack); log(`Launched ${b.dataset.attack} from the attacker container`); } catch { toast("The lab did not accept the attack. Is Docker running?"); }
   setTimeout(() => (b.disabled = false), 4000);
 }));
-$("#btn-replay").addEventListener("click", async () => { if (isDemo()) return; const ok = await startReplay(toast); if (ok) log("Replaying a recorded run"); });
+$("#btn-replay").addEventListener("click", async () => { const ok = await startReplay(toast); if (ok) log("Replaying a recorded run"); });
 $("#btn-reset").addEventListener("click", async () => {
-  if (isDemo()) await toggleDemo();
   stopReplay();
   if (state.mode === "live") { try { await api("/api/reset", { method: "POST" }); } catch { /* offline */ } }
   setMode("live"); await loadLive();
 });
-$("#btn-demo").addEventListener("click", () => toggleDemo(toast));
-addEventListener("keydown", (e) => { if (e.key === "d" && !e.metaKey && !e.ctrlKey && document.activeElement?.tagName !== "INPUT") toggleDemo(toast); });
 
 async function boot() {
   initTraffic(); initLane(); initPanel();
   await loadLive();
   connectStream();
   mode();
-  if (new URLSearchParams(location.search).get("demo")) setTimeout(() => toggleDemo(toast), 800);
-  else if (new URLSearchParams(location.search).get("replay")) setTimeout(() => $("#btn-replay").click(), 800);
+  if (new URLSearchParams(location.search).get("replay")) setTimeout(() => $("#btn-replay").click(), 800);
 }
 boot();

@@ -39,8 +39,14 @@ function render() {
   nums.net.textContent = fmt(rate); subs.net.textContent = rate ? "flows / second" : "idle";
   nums.zeek.textContent = fmt(s.flows_total || 0); subs.zeek.textContent = "records parsed";
   nums.t1.textContent = fmt(s.alerts_total || 0); subs.t1.textContent = Object.keys(s.rule_hits || {}).join(" · ") || "rules + Isolation Forest";
-  nums.t2.textContent = fmt(incs.length); subs.t2.textContent = busy ? `${busy} analysing…` : "ATT&CK RAG + local LLM";
-  nums.t3.textContent = fmt(ver); subs.t3.textContent = "policy · subnet · conflict · kernel";
+  const last = incs.at(-1), tm = last?.times || {};
+  const dt = (a, b) => (tm[a] != null && tm[b] != null ? tm[b] - tm[a] : null);
+  const ret = dt("analysis_started", "retrieved"), llm = last?.attempts?.length ? last.attempts.reduce((x, a) => x + a.llm_seconds, 0) : null;
+  const gr = last?.attempts?.filter((a) => a.verdict).at(-1)?.verdict?.checks?.reduce((x, c) => x + (c.elapsed_ms || 0), 0);
+  nums.t2.textContent = fmt(incs.length);
+  subs.t2.textContent = busy ? `${busy} analysing…` : last && llm != null ? `last: retrieve ${ret != null ? ret.toFixed(1) : "–"} s · LLM ${llm.toFixed(0)} s` : "ATT&CK RAG + local LLM";
+  nums.t3.textContent = fmt(ver);
+  subs.t3.textContent = gr != null ? `last: 4 checks in ${fmt(gr, 0)} ms` : "policy · subnet · conflict · kernel";
   nums.fw.textContent = fmt(dep); subs.fw.textContent = dep ? "attackers blocked" : "waiting for approval";
   const latest = incs.at(-1), st = latest ? stageOf(latest) : -1;
   cards.forEach((c, i) => { c.classList.toggle("active", i === Math.floor(st) && st < 6); c.classList.toggle("done", i < st); });

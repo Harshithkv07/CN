@@ -71,7 +71,7 @@ function render() {
   const inc = state.incidents.get(selected), st = $("#status"), cols = $("#cols");
   if (!inc) {
     st.style.display = "none";
-    cols.innerHTML = `<div class="empty" style="grid-column:1/-1;align-self:center">No incident yet. Start an attack, or press <b>Run 2–3 min demo</b>.</div>`;
+    cols.innerHTML = `<div class="empty" style="grid-column:1/-1;align-self:center">No incident yet. Launch an attack from the controls, or replay a recorded run.</div>`;
     return;
   }
   const [label, cls] = ({ QUEUED: ["queued", "busy"], ANALYZING: ["analysing", "busy"], SAFE: ["verified", "ok"], DEPLOYED: ["deployed", "ok"], ESCALATED: ["escalated", "esc"], REJECTED: ["rejected", "bad"], DUPLICATE: ["already blocked", ""], ERROR: ["error", "bad"] }[inc.status] || [inc.status, ""]);
