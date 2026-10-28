@@ -54,7 +54,7 @@ hrt lab build        # build victim / attacker / sandbox Docker images
 hrt lab up           # start the lab; let benign traffic run ~2 min
 hrt train            # fit the Tier-1 Isolation Forest on benign traffic
 
-hrt serve            # orchestrator + website at http://localhost:8000      (terminal B)
+hrt serve            # orchestrator + monitor at http://localhost:8000      (terminal B)
 hrt triage           # live Tier-1 loop                                    (terminal C)
 hrt demo             # scripted end-to-end attack -> mitigation demo       (terminal D)
 ```
